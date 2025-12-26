@@ -1,14 +1,15 @@
-# kazeai
+# KadirOS - Portfolio Website
 
-Portfolio website for Kadir - AI Automation Developer
+Portfolio website for Kadir - AI Automation Developer, designed as a retro-futuristic desktop environment.
 
 ## Features
 
-- **Organic Cybernetics Design**: Anti-template design with hand-drawn borders, organic shapes, and asymmetric layouts
-- **Alba the Cat Companion**: Interactive cat companion with multiple states and animations
+- **KadirOS Desktop Environment**: Retro-futuristic OS-themed interface with windows, taskbar, and desktop icons
 - **Dice Roll Navigation**: TTRPG-inspired navigation with D20 dice roll transitions
-- **Hydroponic Loader**: Organic growth animation for loading states
-- **Node-Based Projects**: n8n-style interactive node graph for project visualization
+- **Alba the Cat Companion**: Interactive cat companion with multiple states and animations
+- **Inventory System**: RPG-style inventory for skills and tools
+- **Quest Log**: Project showcase in a quest log format
+- **Terminal Window**: Live terminal showing n8n automation logs
 
 ## Tech Stack
 
@@ -45,12 +46,16 @@ npm run dev
 
 ## Design Philosophy
 
-This portfolio follows an "Organic Cybernetics" design philosophy:
-- No standard cards or gradients
-- Hand-drawn borders and organic shapes
-- Intentional asymmetry (2-4px offsets, slight rotations)
-- Texture overlays for depth
-- Unique, content-driven layouts
+This portfolio follows a **KadirOS Desktop Environment** theme:
+- Retro-futuristic OS interface (inspired by classic operating systems)
+- Dark theme with neon cyan accents (#25f4f4)
+- Compact window design with minimal padding
+- Terminal-style UI elements
+- Grid pattern backgrounds
+- CRT scanline effects
+- Desktop environment metaphors (windows, taskbar, icons)
+
+See `docs/DESIGN_SYSTEM.md` for detailed design guidelines.
 
 ## Asset Generation
 
