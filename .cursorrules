@@ -1,0 +1,44 @@
+# KadirOS Design System Rules
+
+## Window Sizing
+- ALWAYS use `max-w-4xl` or `max-w-5xl` for windows (never larger)
+- ALWAYS use `max-h-[calc(100vh-12rem)] md:max-h-[75vh]` pattern
+- Window headers: `h-10`, padding `px-3 py-2`
+
+## Typography
+- Headings: `text-lg md:text-xl` (H1), `text-base md:text-lg` (H2), `text-sm` (H3)
+- Body text: `text-xs` (normal), `text-[10px]` (small), `text-[9px]` (tiny)
+- Window titles: `text-sm font-bold tracking-[0.1em]`
+
+## Spacing
+- Window body padding: `p-3 md:p-4`
+- Panel padding: `p-2 md:p-3`
+- Gaps: `gap-2` or `gap-1.5` between items, `gap-3 md:gap-4` between sections
+
+## Icons
+- Window header: 16px
+- Section headers: 14px
+- Buttons: 12px-16px
+- Display: 40px-48px
+
+## Colors
+- Primary: `#25f4f4` (text-primary)
+- Background: `#102222` (bg-background-dark)
+- Surface: `#152a2a` (bg-surface-dark)
+
+## Component Patterns
+- Scrollable containers: `flex-1 overflow-y-auto min-h-0`
+- Flex containers: Always add `min-h-0` to prevent overflow issues
+- Fixed elements: Use `flex-shrink-0`
+
+## Responsive
+- Mobile-first approach
+- Use `md:` prefix for tablet+ (768px+)
+- Padding always responsive: `p-2 md:p-3` or `p-3 md:p-4`
+
+## DO NOT
+- Don't use `h-screen` or `h-full` on windows
+- Don't use padding larger than `p-4`
+- Don't use font sizes larger than `text-xl`
+- Don't create windows wider than `max-w-5xl`
+

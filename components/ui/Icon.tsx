@@ -1,0 +1,115 @@
+"use client";
+
+import {
+  Backpack,
+  BookOpen,
+  Sprout,
+  Satellite,
+  Network,
+  Grid3x3,
+  Search,
+  Terminal,
+  Webhook,
+  Cat,
+  ChevronUp,
+  Wifi,
+  Volume2,
+  Bell,
+  Fingerprint,
+  History,
+  MenuBook,
+  SmartToy,
+  Stars,
+  Code,
+  Rocket,
+  Image as ImageIcon,
+  Replay,
+  Verified,
+  Person,
+  Psychology,
+  Layers,
+  Code2,
+  Bolt,
+  Coffee as CoffeeIcon,
+  Wrench,
+  X,
+  Minus,
+  Maximize2,
+  CheckCircle2,
+  ArrowRight,
+  Send,
+  Heart,
+  Square,
+  BarChart3,
+  Dice6,
+  type LucideIcon,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+
+// Icon name to Lucide component mapping
+const iconMap: Record<string, LucideIcon> = {
+  backpack: Backpack,
+  "history_edu": History,
+  potted_plant: Sprout,
+  satellite_alt: Satellite,
+  account_tree: Network,
+  apps: Grid3x3,
+  search: Search,
+  terminal: Terminal,
+  webhook: Webhook,
+  pets: Cat,
+  expand_less: ChevronUp,
+  wifi: Wifi,
+  volume_up: Volume2,
+  notifications: Bell,
+  fingerprint: Fingerprint,
+  menu_book: MenuBook,
+  smart_toy: SmartToy,
+  stars: Stars,
+  code: Code,
+  rocket_launch: Rocket,
+  image: ImageIcon,
+  replay: Replay,
+  verified: Verified,
+  person: Person,
+  psychology: Psychology,
+  layers: Layers,
+  handyman: Wrench,
+  close: X,
+  minimize: Minus,
+  crop_square: Maximize2,
+  check_circle: CheckCircle2,
+  arrow_forward_ios: ArrowRight,
+  send: Send,
+  feed: BookOpen,
+  military_tech: Stars,
+  folder: Backpack,
+  hub: Network,
+  shield: Layers,
+  database: Network,
+  favorite: Heart,
+  coffee: CoffeeIcon,
+  bolt: Bolt,
+  "check_box_outline_blank": Square,
+  bar_chart: BarChart3,
+  feed: BookOpen,
+  casino: Dice6,
+};
+
+interface IconProps {
+  name: string;
+  className?: string;
+  size?: number | string;
+}
+
+export function Icon({ name, className, size = 24 }: IconProps) {
+  const IconComponent = iconMap[name] || Code;
+
+  return (
+    <IconComponent
+      className={cn(className)}
+      size={typeof size === "string" ? parseInt(size) : size}
+    />
+  );
+}
+

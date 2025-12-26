@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
+  darkMode: "class",
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -9,39 +10,32 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Organic Cybernetics palette
-        organic: {
-          green: "#7FB069",
-          "green-dark": "#5A8A4A",
-          earth: "#D4A574",
-          terracotta: "#C97D60",
-          beige: "#F5F1E8",
-          "off-white": "#FAF9F6",
-        },
-        cyber: {
-          charcoal: "#2C2C2C",
-          "muted-blue": "#6B8FA3",
-          gray: "#4A4A4A",
-        },
+        primary: "#25f4f4",
+        "primary-dim": "#1b8a8a",
+        "background-light": "#f5f8f8",
+        "background-dark": "#102222",
+        "surface-dark": "#152a2a",
+        "surface-darker": "#0d1818",
+        n8n: "#ff6d5a",
       },
-      spacing: {
-        // Organic spacing (not round numbers)
-        "13": "3.25rem",
-        "17": "4.25rem",
-        "23": "5.75rem",
-        "27": "6.75rem",
+      fontFamily: {
+        display: ["Space Grotesk", "sans-serif"],
+        body: ["Noto Sans", "sans-serif"],
+        mono: ["monospace"],
       },
-      rotate: {
-        "1": "1deg",
-        "-1": "-1deg",
-        "2": "2deg",
-        "-2": "-2deg",
+      borderRadius: {
+        DEFAULT: "0.25rem",
+        lg: "0.5rem",
+        xl: "0.75rem",
+        "2xl": "1rem",
+        full: "9999px",
       },
-      animation: {
-        "organic-pulse": "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+      backgroundImage: {
+        "grid-pattern":
+          "linear-gradient(to right, #1a2e2e 1px, transparent 1px), linear-gradient(to bottom, #1a2e2e 1px, transparent 1px)",
       },
-      borderWidth: {
-        "3": "3px",
+      boxShadow: {
+        neon: "0 0 5px rgba(37, 244, 244, 0.2), 0 0 10px rgba(37, 244, 244, 0.1)",
       },
     },
   },
