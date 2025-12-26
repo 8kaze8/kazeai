@@ -1,10 +1,10 @@
-# KadirOS - Portfolio Website
+# KazeOS - Portfolio Website
 
 Portfolio website for Kadir - AI Automation Developer, designed as a retro-futuristic desktop environment.
 
 ## Features
 
-- **KadirOS Desktop Environment**: Retro-futuristic OS-themed interface with windows, taskbar, and desktop icons
+- **KazeOS Desktop Environment**: Retro-futuristic OS-themed interface with windows, taskbar, and desktop icons
 - **Dice Roll Navigation**: TTRPG-inspired navigation with D20 dice roll transitions
 - **Alba the Cat Companion**: Interactive cat companion with multiple states and animations
 - **Inventory System**: RPG-style inventory for skills and tools
@@ -46,7 +46,7 @@ npm run dev
 
 ## Design Philosophy
 
-This portfolio follows a **KadirOS Desktop Environment** theme:
+This portfolio follows a **KazeOS Desktop Environment** theme:
 - Retro-futuristic OS interface (inspired by classic operating systems)
 - Dark theme with neon cyan accents (#25f4f4)
 - Compact window design with minimal padding

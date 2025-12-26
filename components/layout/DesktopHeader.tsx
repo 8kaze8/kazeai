@@ -6,7 +6,7 @@ export function DesktopHeader() {
     <header className="flex justify-between items-start p-6 select-none relative z-20">
       <div className="flex flex-col">
         <h3 className="text-white/90 tracking-widest text-xl font-bold uppercase drop-shadow-lg">
-          KadirOS <span className="text-primary text-sm align-top ml-1">v1.1</span>
+          KazeOS <span className="text-primary text-sm align-top ml-1">v1.1</span>
         </h3>
         <span className="text-white/40 text-xs font-mono tracking-wider">
           SYSTEM: ONLINE

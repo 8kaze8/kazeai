@@ -111,7 +111,7 @@ export function InventoryWindow() {
         <div className="flex items-center gap-2">
           <Icon name="backpack" className="text-primary" size={16} />
           <h3 className="text-white text-sm font-bold tracking-[0.1em]">
-            INVENTORY [KADIR_OS]
+            INVENTORY [KAZE_OS]
           </h3>
         </div>
         <div className="flex gap-2">
@@ -362,7 +362,7 @@ export function InventoryWindow() {
           <span>MEM: 64TB FREE</span>
           <span>NET: CONNECTED (SECURE)</span>
         </div>
-        <div>KADIR_OS v2.4.0</div>
+        <div>KAZE_OS v2.4.0</div>
       </div>
     </div>
   );

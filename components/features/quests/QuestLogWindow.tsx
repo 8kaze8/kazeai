@@ -104,7 +104,7 @@ export function QuestLogWindow() {
         <div className="flex items-center gap-2">
           <Icon name="menu_book" className="text-primary" size={16} />
           <span className="text-white font-bold tracking-wider text-xs uppercase">
-            Quest Log // Kadir_Dev_V2.0
+            Quest Log // Kaze_Dev_V2.0
           </span>
         </div>
         <div className="flex items-center gap-2">

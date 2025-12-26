@@ -5,7 +5,7 @@ import { DesktopEnvironment } from "@/components/layout/DesktopEnvironment";
 import { DiceRollOverlay } from "@/components/features/dice/DiceRollOverlay";
 
 export const metadata: Metadata = {
-  title: "KadirOS v1.1 - Desktop Environment",
+  title: "KazeOS v1.1 - Desktop Environment",
   description: "Kadir's Portfolio - AI Automation Developer specializing in n8n, TTRPG enthusiast, and hydroponics hobbyist",
 };
 

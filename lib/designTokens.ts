@@ -1,5 +1,5 @@
 /**
- * KadirOS Design Tokens
+ * KazeOS Design Tokens
  * 
  * Bu dosya, tüm tasarım sistemi değerlerini merkezi bir yerden yönetmek için kullanılır.
  * Yeni component'ler oluştururken bu değerleri kullanın.

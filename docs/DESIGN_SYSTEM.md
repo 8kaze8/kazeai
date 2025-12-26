@@ -1,8 +1,8 @@
-# KadirOS Design System
+# KazeOS Design System
 
 ## Genel Bakış
 
-KadirOS, retro-futuristik bir desktop environment teması kullanan kişisel portfolio sitesidir. Tasarım dili, eski işletim sistemlerinden ilham alırken modern web teknolojileri ile birleştirilmiştir.
+KazeOS, retro-futuristik bir desktop environment teması kullanan kişisel portfolio sitesidir. Tasarım dili, eski işletim sistemlerinden ilham alırken modern web teknolojileri ile birleştirilmiştir.
 
 ## Tasarım Prensipleri
 
