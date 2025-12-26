@@ -23,35 +23,26 @@ export function Button({
     <motion.button
       onClick={onClick}
       className={`
-        relative px-6 py-3 
+        relative px-8 py-4 font-black text-lg
+        border-3 border-cyber-charcoal
         ${variant === "primary" ? "bg-organic-green text-white" : "bg-organic-beige text-cyber-charcoal"}
+        hand-drawn-shadow
         ${className}
       `}
-      style={{ rotate: `${rotation}deg` }}
-      whileHover={{
-        scale: 1.05,
-        rotate: `${rotation + 1}deg`,
+      style={{
+        rotate: `${rotation}deg`,
+        borderRadius: `${15 + Math.random() * 10}% ${25 + Math.random() * 10}% ${20 + Math.random() * 10}% ${30 + Math.random() * 10}% / ${35 + Math.random() * 10}% ${20 + Math.random() * 10}% ${30 + Math.random() * 10}% ${25 + Math.random() * 10}%`,
       }}
-      whileTap={{ scale: 0.95 }}
+      whileHover={{
+        scale: 1.08,
+        rotate: `${rotation + 2}deg`,
+      }}
+      whileTap={{ scale: 0.92 }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
     >
-      <svg
-        className="absolute inset-0 w-full h-full pointer-events-none"
-        viewBox="0 0 100 100"
-        preserveAspectRatio="none"
-      >
-        <motion.path
-          d="M 5,5 Q 5,5 8,5 L 92,5 Q 95,5 95,8 L 95,92 Q 95,95 92,95 L 8,95 Q 5,95 5,92 Z"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          initial={{ pathLength: 0 }}
-          animate={{ pathLength: 1 }}
-          transition={{ duration: 0.5 }}
-        />
-      </svg>
-      <span className="relative z-10">{children}</span>
+      <span className="relative z-10" style={{ textShadow: "2px 2px 0px rgba(0,0,0,0.2)" }}>
+        {children}
+      </span>
     </motion.button>
   );
 }

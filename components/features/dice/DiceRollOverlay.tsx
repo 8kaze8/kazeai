@@ -1,12 +1,30 @@
 "use client";
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDiceStore } from "@/store/diceStore";
+import { useNavigationStore } from "@/store/navigationStore";
 import { D20Dice } from "./D20Dice";
 import { criticalFail, criticalSuccess, standardTransition } from "@/lib/animations";
 
 export function DiceRollOverlay() {
-  const { isRolling, currentRoll, transitionType } = useDiceStore();
+  const router = useRouter();
+  const { isRolling, currentRoll, transitionType, navigateTo, completeTransition } = useDiceStore();
+  const { setIsTransitioning } = useNavigationStore();
+
+  // Auto-navigate after animation completes
+  useEffect(() => {
+    if (isRolling && navigateTo && currentRoll !== null) {
+      const timer = setTimeout(() => {
+        completeTransition();
+        router.push(navigateTo);
+        setIsTransitioning(false);
+      }, 2500); // Wait for roll animation (1.5s) + display (1s)
+
+      return () => clearTimeout(timer);
+    }
+  }, [isRolling, navigateTo, currentRoll, completeTransition, router, setIsTransitioning]);
 
   const getOverlayStyle = () => {
     switch (transitionType) {
