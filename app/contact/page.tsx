@@ -12,7 +12,7 @@ export default function Contact() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
-  
+
   // Calendar state
   const today = new Date();
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
@@ -20,13 +20,27 @@ export default function Contact() {
   const [selectedDate, setSelectedDate] = useState<Date>(
     new Date(today.getFullYear(), today.getMonth(), today.getDate())
   );
-  const [selectedTimeSlot, setSelectedTimeSlot] = useState<string>("14:00 - 14:30");
+  const [selectedTimeSlot, setSelectedTimeSlot] =
+    useState<string>("14:00 - 14:30");
 
   // Calendar calculations
-  const monthNames = useMemo(() => [
-    "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
-    "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"
-  ], []);
+  const monthNames = useMemo(
+    () => [
+      "JANUARY",
+      "FEBRUARY",
+      "MARCH",
+      "APRIL",
+      "MAY",
+      "JUNE",
+      "JULY",
+      "AUGUST",
+      "SEPTEMBER",
+      "OCTOBER",
+      "NOVEMBER",
+      "DECEMBER",
+    ],
+    []
+  );
 
   const calendarData = useMemo(() => {
     const firstDay = new Date(currentYear, currentMonth, 1);
@@ -35,7 +49,7 @@ export default function Contact() {
     const startingDayOfWeek = firstDay.getDay(); // 0 = Sunday, 1 = Monday, etc.
     // Convert to Monday = 0 format
     const startingDay = startingDayOfWeek === 0 ? 6 : startingDayOfWeek - 1;
-    
+
     return {
       daysInMonth,
       startingDay,
@@ -155,7 +169,11 @@ export default function Contact() {
                   <Icon
                     name="alternate_email"
                     size={16}
-                    className={channel === "direct" ? "text-primary" : "text-accent-text group-hover:text-white"}
+                    className={
+                      channel === "direct"
+                        ? "text-primary"
+                        : "text-accent-text group-hover:text-white"
+                    }
                   />
                   <div className="flex flex-col flex-1 min-w-0">
                     <p
@@ -168,7 +186,9 @@ export default function Contact() {
                       &gt; DIRECT_UPLINK
                     </p>
                     {channel === "direct" && (
-                      <p className="text-[9px] text-primary/70 mt-0.5">Encrypted Email</p>
+                      <p className="text-[9px] text-primary/70 mt-0.5">
+                        Encrypted Email
+                      </p>
                     )}
                   </div>
                 </label>
@@ -194,7 +214,11 @@ export default function Contact() {
                   <Icon
                     name="share"
                     size={16}
-                    className={channel === "social" ? "text-primary" : "text-accent-text group-hover:text-white"}
+                    className={
+                      channel === "social"
+                        ? "text-primary"
+                        : "text-accent-text group-hover:text-white"
+                    }
                   />
                   <div className="flex flex-col flex-1 min-w-0">
                     <p
@@ -207,7 +231,9 @@ export default function Contact() {
                       &gt; SOCIAL_NET
                     </p>
                     {channel === "social" && (
-                      <p className="text-[9px] text-primary/70 mt-0.5">External Connections</p>
+                      <p className="text-[9px] text-primary/70 mt-0.5">
+                        External Connections
+                      </p>
                     )}
                   </div>
                 </label>
@@ -233,7 +259,11 @@ export default function Contact() {
                   <Icon
                     name="calendar_month"
                     size={16}
-                    className={channel === "scheduling" ? "text-primary" : "text-accent-text group-hover:text-white"}
+                    className={
+                      channel === "scheduling"
+                        ? "text-primary"
+                        : "text-accent-text group-hover:text-white"
+                    }
                   />
                   <div className="flex flex-col flex-1 min-w-0">
                     <p
@@ -246,7 +276,9 @@ export default function Contact() {
                       &gt; SCHEDULING
                     </p>
                     {channel === "scheduling" && (
-                      <p className="text-[9px] text-primary/70 mt-0.5">Neural Sync</p>
+                      <p className="text-[9px] text-primary/70 mt-0.5">
+                        Neural Sync
+                      </p>
                     )}
                   </div>
                 </label>
@@ -258,22 +290,48 @@ export default function Contact() {
               <div className="p-2 bg-black/20 rounded border border-border-color space-y-2">
                 <div className="flex justify-between text-[10px] text-accent-text font-mono">
                   <span>CPU_LOAD</span>
-                  <span>{channel === "social" ? "15%" : channel === "scheduling" ? "15%" : "12%"}</span>
+                  <span>
+                    {channel === "social"
+                      ? "15%"
+                      : channel === "scheduling"
+                      ? "15%"
+                      : "12%"}
+                  </span>
                 </div>
                 <div className="w-full bg-border-color h-1 rounded-full overflow-hidden">
                   <div
                     className="bg-primary h-full"
-                    style={{ width: channel === "social" ? "15%" : channel === "scheduling" ? "15%" : "12%" }}
+                    style={{
+                      width:
+                        channel === "social"
+                          ? "15%"
+                          : channel === "scheduling"
+                          ? "15%"
+                          : "12%",
+                    }}
                   />
                 </div>
                 <div className="flex justify-between text-[10px] text-accent-text font-mono">
                   <span>MEM_USAGE</span>
-                  <span>{channel === "social" ? "482MB" : channel === "scheduling" ? "512MB" : "428MB"}</span>
+                  <span>
+                    {channel === "social"
+                      ? "482MB"
+                      : channel === "scheduling"
+                      ? "512MB"
+                      : "428MB"}
+                  </span>
                 </div>
                 <div className="w-full bg-border-color h-1 rounded-full overflow-hidden">
                   <div
                     className="bg-primary h-full"
-                    style={{ width: channel === "social" ? "38%" : channel === "scheduling" ? "40%" : "35%" }}
+                    style={{
+                      width:
+                        channel === "social"
+                          ? "38%"
+                          : channel === "scheduling"
+                          ? "40%"
+                          : "35%",
+                    }}
                   />
                 </div>
               </div>
@@ -291,7 +349,11 @@ export default function Contact() {
                   </h1>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs font-mono bg-[#0d1f1f] p-3 rounded border border-border-color relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-1 opacity-20">
-                      <Icon name="lock" size={32} className="text-border-color" />
+                      <Icon
+                        name="lock"
+                        size={32}
+                        className="text-border-color"
+                      />
                     </div>
                     <div className="flex flex-col gap-1 z-10">
                       <span className="text-accent-text text-[9px] uppercase tracking-widest">
@@ -299,21 +361,30 @@ export default function Contact() {
                       </span>
                       <span className="text-white font-bold flex items-center gap-1.5 text-xs">
                         KADIR [ADMIN]
-                        <Icon name="verified" size={12} className="text-primary" />
+                        <Icon
+                          name="verified"
+                          size={12}
+                          className="text-primary"
+                        />
                       </span>
                     </div>
                     <div className="flex flex-col gap-1 z-10">
                       <span className="text-accent-text text-[9px] uppercase tracking-widest">
                         Encryption Protocol
                       </span>
-                      <span className="text-primary font-bold text-xs">AES-256 (STANDARD)</span>
+                      <span className="text-primary font-bold text-xs">
+                        AES-256 (STANDARD)
+                      </span>
                     </div>
                   </div>
                 </div>
 
                 {/* Form Area */}
                 <div className="flex-1 overflow-y-auto p-3 md:p-4 min-h-0">
-                  <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-2xl">
+                  <form
+                    onSubmit={handleSubmit}
+                    className="flex flex-col gap-4 max-w-2xl"
+                  >
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {/* Sender ID */}
                       <label className="flex flex-col gap-1.5 group">
@@ -364,7 +435,9 @@ export default function Contact() {
                         <span className="text-accent-text text-[10px] font-bold tracking-wider group-focus-within:text-primary transition-colors">
                           DATA_PACKET (MESSAGE)
                         </span>
-                        <span className="text-[9px] text-accent-text/50 font-mono">TXT_ONLY</span>
+                        <span className="text-[9px] text-accent-text/50 font-mono">
+                          TXT_ONLY
+                        </span>
                       </div>
                       <div className="relative flex-1">
                         <textarea
@@ -397,7 +470,9 @@ export default function Contact() {
                           className="group-hover:animate-ping absolute left-3 opacity-0 group-hover:opacity-20"
                         />
                         <Icon name="send" size={16} />
-                        <span className="tracking-wider">INITIATE_TRANSMISSION</span>
+                        <span className="tracking-wider">
+                          INITIATE_TRANSMISSION
+                        </span>
                         <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 pointer-events-none" />
                       </button>
                     </div>
@@ -413,7 +488,11 @@ export default function Contact() {
                   </h1>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs font-mono bg-[#0d1f1f] p-3 rounded border border-border-color relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-1 opacity-20">
-                      <Icon name="hub" size={32} className="text-border-color" />
+                      <Icon
+                        name="hub"
+                        size={32}
+                        className="text-border-color"
+                      />
                     </div>
                     <div className="flex flex-col gap-1 z-10">
                       <span className="text-accent-text text-[9px] uppercase tracking-widest">
@@ -421,14 +500,20 @@ export default function Contact() {
                       </span>
                       <span className="text-white font-bold flex items-center gap-1.5 text-xs">
                         BROADCASTING
-                        <Icon name="wifi" size={12} className="text-primary animate-pulse" />
+                        <Icon
+                          name="wifi"
+                          size={12}
+                          className="text-primary animate-pulse"
+                        />
                       </span>
                     </div>
                     <div className="flex flex-col gap-1 z-10">
                       <span className="text-accent-text text-[9px] uppercase tracking-widest">
                         Security Level
                       </span>
-                      <span className="text-primary font-bold text-xs">PUBLIC_ACCESS (READ-ONLY)</span>
+                      <span className="text-primary font-bold text-xs">
+                        PUBLIC_ACCESS (READ-ONLY)
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -450,7 +535,9 @@ export default function Contact() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between mb-1">
-                            <h3 className="text-white font-bold tracking-wider text-xs">GITHUB_REPO</h3>
+                            <h3 className="text-white font-bold tracking-wider text-xs">
+                              GITHUB_REPO
+                            </h3>
                             <Icon
                               name="arrow_outward"
                               size={14}
@@ -487,7 +574,9 @@ export default function Contact() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between mb-1">
-                            <h3 className="text-white font-bold tracking-wider text-xs">LINKEDIN_PRO</h3>
+                            <h3 className="text-white font-bold tracking-wider text-xs">
+                              LINKEDIN_PRO
+                            </h3>
                             <Icon
                               name="arrow_outward"
                               size={14}
@@ -524,7 +613,9 @@ export default function Contact() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between mb-1">
-                            <h3 className="text-white font-bold tracking-wider text-xs">X_FEED</h3>
+                            <h3 className="text-white font-bold tracking-wider text-xs">
+                              X_FEED
+                            </h3>
                             <Icon
                               name="arrow_outward"
                               size={14}
@@ -561,7 +652,9 @@ export default function Contact() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between mb-1">
-                            <h3 className="text-white font-bold tracking-wider text-xs">WEB_PORTFOLIO</h3>
+                            <h3 className="text-white font-bold tracking-wider text-xs">
+                              WEB_PORTFOLIO
+                            </h3>
                             <Icon
                               name="arrow_outward"
                               size={14}
@@ -621,11 +714,16 @@ export default function Contact() {
                 {/* Info Header */}
                 <div className="p-3 md:p-4 border-b border-border-color/50 flex-shrink-0">
                   <h1 className="text-white text-lg md:text-xl font-bold tracking-tight mb-3 flex items-center gap-2">
-                    <span className="text-primary">&gt;</span> SCHEDULING_PROTOCOL
+                    <span className="text-primary">&gt;</span>{" "}
+                    SCHEDULING_PROTOCOL
                   </h1>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs font-mono bg-[#0d1f1f] p-3 rounded border border-border-color relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-1 opacity-20">
-                      <Icon name="calendar_month" size={32} className="text-border-color" />
+                      <Icon
+                        name="calendar_month"
+                        size={32}
+                        className="text-border-color"
+                      />
                     </div>
                     <div className="flex flex-col gap-1 z-10">
                       <span className="text-accent-text text-[9px] uppercase tracking-widest">
@@ -633,7 +731,11 @@ export default function Contact() {
                       </span>
                       <span className="text-white font-bold flex items-center gap-1.5 text-xs">
                         KADIR [ADMIN]
-                        <Icon name="verified" size={12} className="text-primary" />
+                        <Icon
+                          name="verified"
+                          size={12}
+                          className="text-primary"
+                        />
                       </span>
                     </div>
                     <div className="flex flex-col gap-1 z-10">
@@ -660,7 +762,11 @@ export default function Contact() {
                             onClick={() => navigateMonth("prev")}
                             className="text-accent-text hover:text-primary transition-colors"
                           >
-                            <Icon name="arrow_forward_ios" size={14} className="rotate-180" />
+                            <Icon
+                              name="arrow_forward_ios"
+                              size={14}
+                              className="rotate-180"
+                            />
                           </button>
                           <h3 className="text-white text-xs font-bold font-mono">
                             {calendarData.monthName} {calendarData.year}
@@ -674,22 +780,32 @@ export default function Contact() {
                         </div>
                         {/* Calendar Grid */}
                         <div className="grid grid-cols-7 gap-1 mb-2">
-                          {["MO", "TU", "WE", "TH", "FR", "SA", "SU"].map((day) => (
-                            <div
-                              key={day}
-                              className="text-center text-[9px] text-accent-text font-mono py-1"
-                            >
-                              {day}
-                            </div>
-                          ))}
+                          {["MO", "TU", "WE", "TH", "FR", "SA", "SU"].map(
+                            (day) => (
+                              <div
+                                key={day}
+                                className="text-center text-[9px] text-accent-text font-mono py-1"
+                              >
+                                {day}
+                              </div>
+                            )
+                          )}
                         </div>
                         <div className="grid grid-cols-7 gap-1">
                           {/* Empty cells for days before month starts */}
-                          {Array.from({ length: calendarData.startingDay }).map((_, i) => (
-                            <div key={`empty-${i}`} className="aspect-square" />
-                          ))}
+                          {Array.from({ length: calendarData.startingDay }).map(
+                            (_, i) => (
+                              <div
+                                key={`empty-${i}`}
+                                className="aspect-square"
+                              />
+                            )
+                          )}
                           {/* Days of the month */}
-                          {Array.from({ length: calendarData.daysInMonth }, (_, i) => i + 1).map((day) => {
+                          {Array.from(
+                            { length: calendarData.daysInMonth },
+                            (_, i) => i + 1
+                          ).map((day) => {
                             const dayIsToday = isToday(day);
                             const dayIsSelected = isSelected(day);
                             const dayIsAvailable = isAvailable(day);
@@ -717,8 +833,12 @@ export default function Contact() {
                       {/* Available Slots */}
                       <div className="bg-[#152a2a] border border-border-color rounded p-3 md:p-4">
                         <div className="flex items-center justify-between mb-3">
-                          <h3 className="text-white text-xs font-bold font-mono">AVAILABLE SLOTS</h3>
-                          <span className="text-[9px] text-accent-text font-mono">UTC+02:00</span>
+                          <h3 className="text-white text-xs font-bold font-mono">
+                            AVAILABLE SLOTS
+                          </h3>
+                          <span className="text-[9px] text-accent-text font-mono">
+                            UTC+02:00
+                          </span>
                         </div>
                         <div className="space-y-2 max-h-[280px] overflow-y-auto">
                           {[
@@ -758,7 +878,9 @@ export default function Contact() {
                                     )}
                                   </div>
                                 </div>
-                                <span className="text-white text-xs font-mono">{slot}</span>
+                                <span className="text-white text-xs font-mono">
+                                  {slot}
+                                </span>
                               </label>
                             );
                           })}
@@ -769,14 +891,21 @@ export default function Contact() {
                     {/* Selected Uplink */}
                     <div className="bg-[#0d1f1f] border border-border-color rounded p-3 flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <Icon name="calendar_month" size={16} className="text-primary" />
+                        <Icon
+                          name="calendar_month"
+                          size={16}
+                          className="text-primary"
+                        />
                         <div>
                           <span className="text-[9px] text-accent-text font-mono uppercase tracking-widest block">
                             Selected Uplink
                           </span>
                           <span className="text-white text-xs font-mono font-bold">
-                            {monthNames[selectedDate.getMonth()].substring(0, 3).toUpperCase()}{" "}
-                            {selectedDate.getDate()} @ {selectedTimeSlot.split(" - ")[0]}
+                            {monthNames[selectedDate.getMonth()]
+                              .substring(0, 3)
+                              .toUpperCase()}{" "}
+                            {selectedDate.getDate()} @{" "}
+                            {selectedTimeSlot.split(" - ")[0]}
                           </span>
                         </div>
                       </div>
@@ -790,7 +919,9 @@ export default function Contact() {
               </>
             ) : (
               <div className="flex-1 flex items-center justify-center p-3 md:p-4">
-                <p className="text-accent-text text-xs font-mono">SCHEDULING coming soon...</p>
+                <p className="text-accent-text text-xs font-mono">
+                  SCHEDULING coming soon...
+                </p>
               </div>
             )}
           </div>
