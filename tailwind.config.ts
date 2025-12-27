@@ -16,6 +16,9 @@ const config: Config = {
         "background-dark": "#102222",
         "surface-dark": "#152a2a",
         "surface-darker": "#0d1818",
+        "panel-dark": "#102323",
+        "border-color": "#224949",
+        "accent-text": "#90cbcb",
         n8n: "#ff6d5a",
       },
       fontFamily: {

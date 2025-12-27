@@ -42,6 +42,16 @@ import {
   Square,
   BarChart3,
   Dice6,
+  AtSign,
+  Share2,
+  Calendar,
+  Lock,
+  Mail,
+  Info,
+  Briefcase,
+  Hash,
+  Globe,
+  ExternalLink,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -94,6 +104,16 @@ const iconMap: Record<string, LucideIcon> = {
   bar_chart: BarChart3,
   feed: BookOpen,
   casino: Dice6,
+  alternate_email: AtSign,
+  share: Share2,
+  calendar_month: Calendar,
+  lock: Lock,
+  mail: Mail,
+  info: Info,
+  business_center: Briefcase,
+  tag: Hash,
+  language: Globe,
+  arrow_outward: ExternalLink,
 };
 
 interface IconProps {
