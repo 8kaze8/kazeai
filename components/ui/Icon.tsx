@@ -61,6 +61,11 @@ import {
   Brain,
   List,
   ArrowLeft,
+  Building2,
+  FileText,
+  Trophy,
+  PlayCircle,
+  Download,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -133,6 +138,13 @@ const iconMap: Record<string, LucideIcon> = {
   memory: Brain,
   list: List,
   arrow_back: ArrowLeft,
+  history: History,
+  apartment: Building2,
+  verified_user: Verified,
+  description: FileText,
+  trophy: Trophy,
+  play_circle: PlayCircle,
+  download: Download,
 };
 
 interface IconProps {

@@ -41,6 +41,14 @@ export function DesktopIcons({
       hoverColor: "text-[#a6e3a1]",
     },
     {
+      id: "timeline-archives",
+      path: "/timeline",
+      label: "Timeline Archives",
+      icon: "history",
+      color: "text-blue-400",
+      hoverColor: "text-blue-400",
+    },
+    {
       id: "research-lab",
       path: "/about",
       label: "Research Lab",
@@ -88,6 +96,8 @@ export function DesktopIcons({
                 ? "group-hover:text-green-400"
                 : icon.hoverColor === "text-[#f9e2af]"
                 ? "group-hover:text-[#f9e2af]"
+                : icon.hoverColor === "text-blue-400"
+                ? "group-hover:text-blue-400"
                 : "group-hover:text-[#a6e3a1]"
             }`}
           >
