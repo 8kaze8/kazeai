@@ -23,10 +23,10 @@ export default function Contact() {
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string>("14:00 - 14:30");
 
   // Calendar calculations
-  const monthNames = [
+  const monthNames = useMemo(() => [
     "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
     "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"
-  ];
+  ], []);
 
   const calendarData = useMemo(() => {
     const firstDay = new Date(currentYear, currentMonth, 1);
@@ -102,8 +102,7 @@ export default function Contact() {
           <div className="flex items-center gap-2">
             <Icon name="terminal" className="text-primary" size={16} />
             <h3 className="text-white text-sm font-bold tracking-[0.1em]">
-              {/* eslint-disable-next-line react/jsx-no-comment-textnodes */}
-              // SECURE_COMMS_LINK_V2.0
+              {/* SECURE_COMMS_LINK_V2.0 */}
             </h3>
             <div className="ml-3 flex items-center gap-1.5 px-2 py-0.5 bg-primary/10 rounded text-[9px] text-primary font-mono border border-primary/20">
               <span className="w-1 h-1 rounded-full bg-primary animate-pulse" />

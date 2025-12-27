@@ -119,7 +119,6 @@ const iconMap: Record<string, LucideIcon> = {
   bolt: Bolt,
   "check_box_outline_blank": Square,
   bar_chart: BarChart3,
-  feed: BookOpen,
   casino: Dice6,
   alternate_email: AtSign,
   share: Share2,

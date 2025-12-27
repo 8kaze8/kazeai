@@ -135,8 +135,7 @@ export default function Timeline() {
           <div className="flex items-center gap-2">
             <Icon name="history" className="text-primary" size={16} />
             <h3 className="text-white text-sm font-bold tracking-[0.1em]">
-              {/* eslint-disable-next-line react/jsx-no-comment-textnodes */}
-              /// TIMELINE_ARCHIVES_V2.0
+              {/* TIMELINE_ARCHIVES_V2.0 */}
             </h3>
           </div>
           <div className="flex gap-2">
