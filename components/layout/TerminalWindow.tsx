@@ -1,13 +1,22 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Icon } from "@/components/ui/Icon";
 
 export function TerminalWindow() {
   const [logs, setLogs] = useState<string[]>([]);
+  const terminalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const initialLogs = [
+    const welcomeMessage = [
+      "Hello! I'm Kadir 👋",
+      "",
+      "> AI Automation Developer",
+      "> Building intelligent automation workflows",
+      "",
+    ];
+
+    const systemLogs = [
       "➜ ~ n8n start --tunnel",
       "... initializing n8n core",
       "... loading workflows [Hydro_Monitor, Portfolio_Bot]",
@@ -20,15 +29,17 @@ export function TerminalWindow() {
       "> pH: 6.2 | EC: 1.8 | Temp: 24°C",
     ];
 
+    const allLogs = [...welcomeMessage, ...systemLogs];
+
     let index = 0;
     const interval = setInterval(() => {
-      if (index < initialLogs.length) {
-        setLogs((prev) => [...prev, initialLogs[index]]);
+      if (index < allLogs.length) {
+        setLogs((prev) => [...prev, allLogs[index]]);
         index++;
       } else {
         clearInterval(interval);
       }
-    }, 500);
+    }, 200); // Faster typing for welcome message
 
     return () => {
       clearInterval(interval);
@@ -53,21 +64,31 @@ export function TerminalWindow() {
       </div>
 
       {/* Window Content */}
-      <div className="p-4 font-mono text-sm h-64 overflow-y-auto relative">
+      <div ref={terminalRef} className="p-4 font-mono text-sm relative">
         {/* Scanline overlay */}
         <div className="absolute inset-0 scanline opacity-10 pointer-events-none"></div>
         <div className="flex flex-col gap-1 text-gray-300 relative z-10">
           {logs.map((log, index) => {
             if (!log || typeof log !== "string") return null;
-            
+
+            // Empty line
+            if (log === "") {
+              return <div key={index} className="h-1"></div>;
+            }
+
+            // Command prompt
             if (log.startsWith("➜")) {
               return (
                 <p key={index}>
                   <span className="text-green-500">➜</span>{" "}
-                  <span className="text-primary">~</span> {log.length > 4 ? log.substring(4) : log}
+                  <span className="text-primary">~</span>{" "}
+                  {log.length > 4 ? log.substring(4) : log}
                 </p>
               );
-            } else if (log.startsWith("[n8n]")) {
+            }
+
+            // n8n workflow
+            if (log.startsWith("[n8n]")) {
               return (
                 <div
                   key={index}
@@ -76,26 +97,42 @@ export function TerminalWindow() {
                   <p className="text-n8n font-bold mb-1">{log}</p>
                 </div>
               );
-            } else if (log.startsWith("> Status:")) {
+            }
+
+            // Status
+            if (log.startsWith("> Status:")) {
               return (
                 <p key={index} className="pl-4">
                   {log.replace("EXECUTING", "")}
                   <span className="text-green-400">EXECUTING</span>
                 </p>
               );
-            } else if (log.startsWith("> pH:")) {
+            }
+
+            // pH stats
+            if (log.startsWith("> pH:")) {
               return (
                 <p key={index} className="text-green-400 text-xs">
                   {log}
                 </p>
               );
-            } else {
+            }
+
+            // Info lines with >
+            if (log.startsWith(">")) {
               return (
-                <p key={index} className="text-white/50 text-xs">
+                <p key={index} className="text-primary/70 text-xs font-mono">
                   {log}
                 </p>
               );
             }
+
+            // Default
+            return (
+              <p key={index} className="text-white/50 text-xs font-mono">
+                {log}
+              </p>
+            );
           })}
           <p>
             <span className="text-green-500">➜</span>{" "}
@@ -107,4 +144,3 @@ export function TerminalWindow() {
     </div>
   );
 }
-

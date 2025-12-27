@@ -2,101 +2,116 @@
 
 import { motion } from "framer-motion";
 import { useAlbaStore } from "@/store/albaStore";
+import Image from "next/image";
 
 export function AlbaSprite() {
   const { state } = useAlbaStore();
 
-  // Simple SVG-based cat sprite (placeholder until actual sprites are generated)
-  const renderSprite = () => {
+  // Map state to sprite file
+  const getSpriteFile = () => {
     switch (state) {
       case "sleeping":
-        return (
-          <motion.svg
-            width="64"
-            height="64"
-            viewBox="0 0 64 64"
-            animate={{ y: [0, -2, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          >
-            {/* Sleeping cat - curled up */}
-            <circle cx="32" cy="40" r="20" fill="#D4A574" />
-            <circle cx="28" cy="38" r="3" fill="#2C2C2C" />
-            <circle cx="36" cy="38" r="3" fill="#2C2C2C" />
-            <ellipse cx="32" cy="42" rx="8" ry="4" fill="#C97D60" />
-          </motion.svg>
-        );
-      case "awake":
-        return (
-          <motion.svg width="64" height="64" viewBox="0 0 64 64">
-            {/* Awake cat - sitting */}
-            <circle cx="32" cy="35" r="18" fill="#D4A574" />
-            <circle cx="28" cy="32" r="2" fill="#2C2C2C" />
-            <circle cx="36" cy="32" r="2" fill="#2C2C2C" />
-            <path d="M 28,36 Q 32,38 36,36" stroke="#2C2C2C" strokeWidth="1.5" fill="none" />
-            <polygon points="24,28 26,24 28,28" fill="#C97D60" />
-            <polygon points="36,28 38,24 40,28" fill="#C97D60" />
-          </motion.svg>
-        );
+        return "/sprites/alba/alba-sleeping.png";
       case "walking":
+        return "/sprites/alba/alba-walking.png";
+      case "awake":
+        return "/sprites/alba/alba-sitting.png";
+      case "purring":
+        return "/sprites/alba/alba-purring.png";
+      case "curious":
+        return "/sprites/alba/alba-curious.png";
+      case "angry":
+        return "/sprites/alba/alba-angry.png";
+      default:
+        return "/sprites/alba/alba-sitting.png";
+    }
+  };
+
+  // Get symbol for each state
+  const getSymbol = () => {
+    switch (state) {
+      case "curious":
         return (
-          <motion.svg
-            width="64"
-            height="64"
-            viewBox="0 0 64 64"
-            animate={{ x: [0, 2, 0] }}
-            transition={{ duration: 0.5, repeat: Infinity }}
+          <motion.div
+            className="absolute -top-6 left-1/2 -translate-x-1/2 text-[#cba6f7] font-bold text-xl"
+            animate={{ y: [0, -3, 0], scale: [1, 1.1, 1] }}
+            transition={{ duration: 1, repeat: Infinity, ease: "easeInOut" }}
           >
-            {/* Walking cat */}
-            <circle cx="32" cy="30" r="16" fill="#D4A574" />
-            <circle cx="28" cy="28" r="2" fill="#2C2C2C" />
-            <circle cx="36" cy="28" r="2" fill="#2C2C2C" />
-            <ellipse cx="32" cy="32" rx="6" ry="3" fill="#C97D60" />
-            <rect x="26" y="42" width="4" height="8" fill="#D4A574" />
-            <rect x="34" y="42" width="4" height="8" fill="#D4A574" />
-          </motion.svg>
+            ?
+          </motion.div>
         );
       case "purring":
         return (
-          <motion.svg
-            width="64"
-            height="64"
-            viewBox="0 0 64 64"
-            animate={{
-              scale: [1, 1.1, 1],
-              rotate: [-1, 1, -1],
-            }}
-            transition={{ duration: 0.3, repeat: Infinity }}
+          <motion.div
+            className="absolute -top-6 left-1/2 -translate-x-1/2 text-[#cba6f7] font-bold text-sm"
+            animate={{ scale: [1, 1.05, 1] }}
+            transition={{ duration: 0.5, repeat: Infinity, ease: "easeInOut" }}
           >
-            {/* Purring cat */}
-            <circle cx="32" cy="32" r="18" fill="#D4A574" />
-            <circle cx="28" cy="30" r="2.5" fill="#2C2C2C" />
-            <circle cx="36" cy="30" r="2.5" fill="#2C2C2C" />
-            <path d="M 26,36 Q 32,40 38,36" stroke="#2C2C2C" strokeWidth="2" fill="none" />
-          </motion.svg>
+            PURR!
+          </motion.div>
         );
-      case "curious":
+      case "angry":
         return (
-          <motion.svg
-            width="64"
-            height="64"
-            viewBox="0 0 64 64"
-            animate={{ rotate: [-2, 2, -2] }}
-            transition={{ duration: 1, repeat: Infinity }}
+          <motion.div
+            className="absolute -top-6 left-1/2 -translate-x-1/2 text-red-400 font-bold text-2xl"
+            animate={{ 
+              scale: [1, 1.3, 1], 
+              rotate: [0, 15, -15, 0],
+              opacity: [1, 0.8, 1]
+            }}
+            transition={{ duration: 0.15, repeat: Infinity, ease: "easeInOut" }}
+            style={{
+              textShadow: "0 0 10px rgba(239, 68, 68, 0.8), 0 0 20px rgba(239, 68, 68, 0.6)",
+            }}
           >
-            {/* Curious cat - head follows cursor */}
-            <circle cx="32" cy="30" r="16" fill="#D4A574" />
-            <circle cx="30" cy="28" r="2.5" fill="#2C2C2C" />
-            <circle cx="34" cy="28" r="2.5" fill="#2C2C2C" />
-            <ellipse cx="32" cy="32" rx="5" ry="3" fill="#C97D60" />
-            <polygon points="24,26 26,22 28,26" fill="#C97D60" />
-            <polygon points="36,26 38,22 40,26" fill="#C97D60" />
-          </motion.svg>
+            !
+          </motion.div>
         );
       default:
         return null;
     }
   };
 
-  return <div className="relative">{renderSprite()}</div>;
+  return (
+    <div className="relative w-32 h-32">
+      {/* Symbol above head */}
+      {getSymbol()}
+      
+      {/* Sprite image */}
+      <motion.div
+        className="relative w-32 h-32"
+        animate={
+          state === "sleeping"
+            ? { y: [0, -2, 0] }
+            : state === "purring"
+            ? { scale: [1, 1.05, 1], rotate: [-1, 1, -1] }
+            : state === "curious"
+            ? { rotate: [-2, 2, -2] }
+            : state === "angry"
+            ? { 
+                scale: [1, 1.15, 1], 
+                x: [-4, 4, -4, 4, -4],
+                rotate: [-3, 3, -3, 3, -3]
+              }
+            : {}
+        }
+        transition={{
+          duration: state === "sleeping" ? 2 : state === "purring" ? 0.3 : state === "angry" ? 0.15 : 1,
+          repeat: state === "sleeping" || state === "purring" || state === "curious" || state === "angry" ? Infinity : 0,
+          ease: state === "angry" ? "linear" : "easeInOut",
+        }}
+      >
+        <Image
+          src={getSpriteFile()}
+          alt={`Alba ${state}`}
+          width={128}
+          height={128}
+          className="w-full h-full object-contain"
+          style={{ imageRendering: "pixelated" }}
+          unoptimized
+        />
+      </motion.div>
+    </div>
+  );
 }
 

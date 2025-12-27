@@ -6,6 +6,7 @@ import { DesktopHeader } from "./DesktopHeader";
 import { DesktopIcons } from "./DesktopIcons";
 import { TerminalWindow } from "./TerminalWindow";
 import { Taskbar } from "./Taskbar";
+import { AlbaCompanion } from "@/components/features/alba/AlbaCompanion";
 import { Icon } from "@/components/ui/Icon";
 
 interface DesktopEnvironmentProps {
@@ -34,7 +35,9 @@ export function DesktopEnvironment({ children }: DesktopEnvironmentProps) {
         <TerminalWindow />
 
         {/* Page Content */}
-        <div className="flex-1 relative z-10 min-h-0 flex items-center justify-center w-full">{children}</div>
+        <div className="flex-1 relative z-10 min-h-0 flex items-center justify-center w-full">
+          {children}
+        </div>
 
         {/* Mobile Center Content Placeholders */}
         <div className="md:hidden flex-1 flex flex-col justify-center items-center text-center p-4">
@@ -52,7 +55,9 @@ export function DesktopEnvironment({ children }: DesktopEnvironmentProps) {
 
       {/* Taskbar */}
       <Taskbar currentPath={pathname} onNavigate={router.push} />
+
+      {/* Alba Companion */}
+      <AlbaCompanion />
     </div>
   );
 }
-

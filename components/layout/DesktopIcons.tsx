@@ -33,10 +33,18 @@ export function DesktopIcons({
       hoverColor: "text-[#cba6f7]",
     },
     {
-      id: "hydro-lab",
+      id: "skill-tree",
+      path: "/skills",
+      label: "Skill Tree",
+      icon: "account_tree",
+      color: "text-[#a6e3a1]",
+      hoverColor: "text-[#a6e3a1]",
+    },
+    {
+      id: "research-lab",
       path: "/about",
-      label: "Hydro Lab",
-      icon: "potted_plant",
+      label: "Research Lab",
+      icon: "layers",
       color: "text-green-400",
       hoverColor: "text-green-400",
     },
@@ -47,14 +55,6 @@ export function DesktopIcons({
       icon: "satellite_alt",
       color: "text-[#f9e2af]",
       hoverColor: "text-[#f9e2af]",
-    },
-    {
-      id: "skill-tree",
-      path: "/skills",
-      label: "Skill Tree",
-      icon: "account_tree",
-      color: "text-[#a6e3a1]",
-      hoverColor: "text-[#a6e3a1]",
     },
   ];
 
