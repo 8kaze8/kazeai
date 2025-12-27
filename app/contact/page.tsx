@@ -42,7 +42,7 @@ export default function Contact() {
       monthName: monthNames[currentMonth],
       year: currentYear,
     };
-  }, [currentMonth, currentYear]);
+  }, [currentMonth, currentYear, monthNames]);
 
   const navigateMonth = (direction: "prev" | "next") => {
     if (direction === "prev") {
@@ -102,6 +102,7 @@ export default function Contact() {
           <div className="flex items-center gap-2">
             <Icon name="terminal" className="text-primary" size={16} />
             <h3 className="text-white text-sm font-bold tracking-[0.1em]">
+              {/* eslint-disable-next-line react/jsx-no-comment-textnodes */}
               // SECURE_COMMS_LINK_V2.0
             </h3>
             <div className="ml-3 flex items-center gap-1.5 px-2 py-0.5 bg-primary/10 rounded text-[9px] text-primary font-mono border border-primary/20">

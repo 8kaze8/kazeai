@@ -135,6 +135,7 @@ export default function Timeline() {
           <div className="flex items-center gap-2">
             <Icon name="history" className="text-primary" size={16} />
             <h3 className="text-white text-sm font-bold tracking-[0.1em]">
+              {/* eslint-disable-next-line react/jsx-no-comment-textnodes */}
               /// TIMELINE_ARCHIVES_V2.0
             </h3>
           </div>
@@ -339,6 +340,7 @@ export default function Timeline() {
                   {selectedExperience.demoImage && (
                     <div className="bg-surface-dark rounded-lg border border-border-color p-1 overflow-hidden group cursor-pointer">
                       <div className="relative h-32 md:h-40 w-full overflow-hidden rounded-lg bg-black">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           alt="Project demo"
                           className="w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-500"

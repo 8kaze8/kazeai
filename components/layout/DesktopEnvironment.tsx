@@ -48,7 +48,8 @@ export function DesktopEnvironment({ children }: DesktopEnvironmentProps) {
             Welcome, Traveler
           </h2>
           <p className="text-white/60 text-sm">
-            Select a module from the grid to begin browsing Kadir's archives.
+            Select a module from the grid to begin browsing Kadir&apos;s
+            archives.
           </p>
         </div>
       </main>

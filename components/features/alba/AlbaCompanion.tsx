@@ -11,9 +11,12 @@ export function AlbaCompanion() {
   const { position, state, setPosition, setState } = useAlbaStore();
   const { handleHover, handleClick } = useAlbaInteraction();
   const [isDragging, setIsDragging] = useState(false);
+  const [hasMoved, setHasMoved] = useState(false);
   const [dragPosition, setDragPosition] = useState({ x: 0, y: 0 });
+  const [isClickMove, setIsClickMove] = useState(false);
   const dragStartPos = useRef({ x: 0, y: 0 });
   const dragOffset = useRef({ x: 0, y: 0 });
+  const finalDragPos = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     // Set initial position to bottom-right (above taskbar) - no animation
@@ -28,12 +31,14 @@ export function AlbaCompanion() {
   // Manual drag handlers
   const handleMouseDown = (e: React.MouseEvent) => {
     if (e.button !== 0) return; // Only left mouse button
+    e.preventDefault();
+    e.stopPropagation();
     setIsDragging(true);
+    setHasMoved(false);
     setState("walking");
     dragStartPos.current = { x: e.clientX, y: e.clientY };
     dragOffset.current = { x: position.x, y: position.y };
     setDragPosition({ x: position.x, y: position.y });
-    e.preventDefault();
   };
 
   useEffect(() => {
@@ -42,6 +47,11 @@ export function AlbaCompanion() {
     const handleMouseMove = (e: MouseEvent) => {
       const deltaX = e.clientX - dragStartPos.current.x;
       const deltaY = e.clientY - dragStartPos.current.y;
+      
+      // Check if mouse has moved significantly
+      if (Math.abs(deltaX) > 3 || Math.abs(deltaY) > 3) {
+        setHasMoved(true);
+      }
       
       const spriteSize = 128;
       const taskbarHeight = 56;
@@ -55,15 +65,34 @@ export function AlbaCompanion() {
       ));
       
       // Update drag position immediately for smooth following
+      // Don't update position state during drag, only update dragPosition
       setDragPosition({ x: newX, y: newY });
-      setPosition({ x: newX, y: newY });
+      // Store final position in ref for use in handleMouseUp
+      finalDragPos.current = { x: newX, y: newY };
     };
 
-    const handleMouseUp = () => {
+    const handleMouseUp = (e?: MouseEvent) => {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      const wasDragging = hasMoved;
+      if (wasDragging) {
+        // Use ref to get the most current drag position (avoid closure issues)
+        const finalPos = finalDragPos.current;
+        // CRITICAL: Update position to final drag position - NO ANIMATION
+        // Set both position and dragPosition to the same value
+        setPosition(finalPos);
+        setDragPosition(finalPos);
+        // Ensure click move flag is false (this was a drag, not a click)
+        setIsClickMove(false);
+      }
       setIsDragging(false);
+      setHasMoved(false);
       setTimeout(() => {
         setState("awake");
       }, 500);
+      return wasDragging;
     };
 
     window.addEventListener("mousemove", handleMouseMove);
@@ -73,30 +102,52 @@ export function AlbaCompanion() {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [isDragging, setPosition, setState]);
+  }, [isDragging, hasMoved, setPosition, setState]);
+
+  // Use dragPosition during drag, position when not dragging
+  // After drag ends, position is already updated to finalPos, so use position
+  const currentPos = isDragging ? dragPosition : position;
 
   return (
     <motion.div
-      className="fixed z-50 cursor-grab active:cursor-grabbing pointer-events-auto select-none"
+      className="fixed z-40 select-none pointer-events-none"
+      style={{
+        width: 128,
+        height: 128,
+      }}
       initial={{ opacity: 1, scale: 1, x: position.x, y: position.y }}
       animate={{
         opacity: 1,
         scale: isDragging ? 1.1 : 1,
-        x: isDragging ? dragPosition.x : position.x,
-        y: isDragging ? dragPosition.y : position.y,
+        x: currentPos.x,
+        y: currentPos.y,
       }}
       transition={{
         scale: { duration: 0.2 },
-        x: isDragging ? { duration: 0 } : { duration: 0.8, ease: "easeOut" },
-        y: isDragging ? { duration: 0 } : { duration: 0.8, ease: "easeOut" },
+        // Only animate on click move, not on drag or initial render
+        x: (isDragging || !isClickMove) ? { duration: 0 } : { duration: 1.5, ease: "easeInOut" },
+        y: (isDragging || !isClickMove) ? { duration: 0 } : { duration: 1.5, ease: "easeInOut" },
       }}
-      onMouseDown={handleMouseDown}
-      onMouseEnter={handleHover}
-      onClick={handleClick}
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.95 }}
     >
-      <div className="relative">
+      <div 
+        className="relative w-full h-full cursor-grab active:cursor-grabbing pointer-events-auto"
+        onMouseDown={handleMouseDown}
+        onMouseEnter={handleHover}
+      onClick={(e) => {
+        e.stopPropagation();
+        if (!hasMoved && !isDragging) {
+          // Mark that this is a click move (not a drag) - will trigger smooth animation
+          setIsClickMove(true);
+          handleClick();
+          // Reset flag after animation completes
+          setTimeout(() => {
+            setIsClickMove(false);
+          }, 1500);
+        }
+      }}
+      >
         {/* Angry glow effect */}
         {state === "angry" && (
           <motion.div

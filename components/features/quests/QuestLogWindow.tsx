@@ -249,7 +249,7 @@ export function QuestLogWindow() {
                     {selectedQuest.title}
                   </h2>
                   <p className="text-gray-400 font-mono text-sm">
-                    Quest ID: {selectedQuest.questId} // Completed:{" "}
+                    Quest ID: {selectedQuest.questId} {/* Completed: */}{" "}
                     {selectedQuest.completed}
                   </p>
                 </div>

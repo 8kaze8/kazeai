@@ -133,7 +133,7 @@ export default function Research() {
                 Research <span className="text-primary">Logs</span>
               </h1>
               <p className="text-gray-400 text-xs mt-1">
-                Kadir's Archives • AI Experiments • Hydroponic Systems
+                Kadir&apos;s Archives • AI Experiments • Hydroponic Systems
               </p>
             </div>
             <div className="flex gap-2">

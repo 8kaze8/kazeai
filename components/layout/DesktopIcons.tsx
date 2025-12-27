@@ -1,6 +1,6 @@
 "use client";
 
-import { useNavigation } from "@/hooks/useNavigation";
+import { useState, useEffect } from "react";
 import { Icon } from "@/components/ui/Icon";
 
 interface DesktopIconsProps {
@@ -8,12 +8,12 @@ interface DesktopIconsProps {
   onNavigate: (path: string) => void;
 }
 
-export function DesktopIcons({
-  currentPath,
-  onNavigate,
-}: DesktopIconsProps) {
-  const { navigate } = useNavigation();
+export function DesktopIcons({ currentPath, onNavigate }: DesktopIconsProps) {
+  const [mounted, setMounted] = useState(false);
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const icons = [
     {
       id: "inventory",
@@ -71,8 +71,14 @@ export function DesktopIcons({
       {icons.map((icon) => (
         <button
           key={icon.id}
-          onClick={() => navigate(icon.path)}
-          className="group flex flex-col items-center gap-2 w-24 p-2 rounded-lg hover:bg-white/5 hover:backdrop-blur-sm transition-all border border-transparent hover:border-primary/30 focus:outline-none focus:bg-white/10"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (mounted && onNavigate) {
+              onNavigate(icon.path);
+            }
+          }}
+          className="group flex flex-col items-center gap-2 w-24 p-2 rounded-lg hover:bg-white/5 hover:backdrop-blur-sm transition-all border border-transparent hover:border-primary/30 focus:outline-none focus:bg-white/10 cursor-pointer"
         >
           <div className="relative w-14 h-14 bg-gradient-to-br from-surface-dark to-background-dark rounded-xl flex items-center justify-center border border-white/10 shadow-lg group-hover:scale-105 transition-transform group-hover:border-primary/50 group-hover:shadow-[0_0_15px_rgba(37,244,244,0.15)]">
             <Icon
@@ -108,4 +114,3 @@ export function DesktopIcons({
     </div>
   );
 }
-

@@ -306,7 +306,7 @@ export default function BlogPostDetail() {
                   {/* Quote */}
                   {section.quote && (
                     <blockquote className="border-l-2 border-primary bg-primary/5 p-3 my-4 italic text-gray-300 rounded-r text-xs md:text-sm">
-                      "{section.quote}"
+                      &quot;{section.quote}&quot;
                     </blockquote>
                   )}
                 </div>
