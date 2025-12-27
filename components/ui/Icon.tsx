@@ -52,6 +52,15 @@ import {
   Hash,
   Globe,
   ExternalLink,
+  FolderOpen,
+  Rss,
+  MessageCircle,
+  ChevronRight,
+  ChevronLeft,
+  Home,
+  Brain,
+  List,
+  ArrowLeft,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -114,6 +123,16 @@ const iconMap: Record<string, LucideIcon> = {
   tag: Hash,
   language: Globe,
   arrow_outward: ExternalLink,
+  folder_open: FolderOpen,
+  rss_feed: Rss,
+  comment: MessageCircle,
+  chevron_right: ChevronRight,
+  chevron_left: ChevronLeft,
+  arrow_forward: ArrowRight,
+  home: Home,
+  memory: Brain,
+  list: List,
+  arrow_back: ArrowLeft,
 };
 
 interface IconProps {

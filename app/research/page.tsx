@@ -64,7 +64,7 @@ const blogPosts: BlogPost[] = [
   },
 ];
 
-export default function About() {
+export default function Research() {
   const router = useRouter();
   const [selectedDirectory, setSelectedDirectory] = useState("/root/all_logs");
   const [searchQuery, setSearchQuery] = useState("");
@@ -181,7 +181,9 @@ export default function About() {
                       }`}
                     >
                       <Icon
-                        name={selectedDirectory === dir ? "folder_open" : "folder"}
+                        name={
+                          selectedDirectory === dir ? "folder_open" : "folder"
+                        }
                         size={14}
                       />
                       {dir}
@@ -222,7 +224,10 @@ export default function About() {
                   <span className="text-primary">42d 12h</span>
                 </div>
                 <div className="w-full bg-gray-800 h-1 mt-2 rounded-full overflow-hidden">
-                  <div className="bg-primary h-full animate-pulse" style={{ width: "75%" }} />
+                  <div
+                    className="bg-primary h-full animate-pulse"
+                    style={{ width: "75%" }}
+                  />
                 </div>
               </div>
             </div>
@@ -239,7 +244,9 @@ export default function About() {
                   {featuredPost.imageUrl && (
                     <div
                       className="absolute inset-0 z-0 opacity-40 group-hover:opacity-50 transition-opacity bg-cover bg-center"
-                      style={{ backgroundImage: `url('${featuredPost.imageUrl}')` }}
+                      style={{
+                        backgroundImage: `url('${featuredPost.imageUrl}')`,
+                      }}
                     />
                   )}
                   <div className="relative z-20 p-4 md:p-6 flex flex-col h-full justify-center">
@@ -285,7 +292,9 @@ export default function About() {
                       <span className="text-primary/50 font-mono text-[10px] mb-1">
                         {post.date}
                       </span>
-                      <span className="text-white font-bold text-xs">{post.category}</span>
+                      <span className="text-white font-bold text-xs">
+                        {post.category}
+                      </span>
                       <div className="flex flex-wrap gap-1 mt-2">
                         {post.tags.map((tag) => (
                           <span
@@ -302,7 +311,9 @@ export default function About() {
                         <h3 className="text-base font-bold text-gray-200 group-hover:text-primary transition-colors mb-2">
                           {post.title}
                         </h3>
-                        <p className="text-gray-400 text-xs leading-relaxed mb-2">{post.excerpt}</p>
+                        <p className="text-gray-400 text-xs leading-relaxed mb-2">
+                          {post.excerpt}
+                        </p>
                       </div>
                       <div className="flex justify-between items-center mt-2">
                         <span className="text-[9px] font-mono text-gray-600">
