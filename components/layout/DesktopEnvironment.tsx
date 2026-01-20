@@ -27,7 +27,7 @@ export function DesktopEnvironment({ children }: DesktopEnvironmentProps) {
       <DesktopHeader />
 
       {/* Desktop Workspace */}
-      <main className="flex-1 relative px-4 md:px-6 lg:px-10 flex flex-col md:flex-row items-start md:items-stretch py-2 md:py-4 gap-4 md:gap-8 min-h-0 overflow-hidden">
+      <main className="flex-1 relative px-4 md:px-6 lg:px-10 flex flex-col md:flex-row items-start md:items-stretch py-2 md:py-4 gap-4 md:gap-8 min-h-0 overflow-visible">
         {/* Desktop Icons Grid (Left) */}
         <DesktopIcons currentPath={pathname} onNavigate={router.push} />
 
@@ -35,12 +35,14 @@ export function DesktopEnvironment({ children }: DesktopEnvironmentProps) {
         <TerminalWindow />
 
         {/* Page Content */}
-        <div className="flex-1 relative z-10 min-h-0 flex items-center justify-center w-full">
-          {children}
+        <div className="flex-1 relative z-10 min-h-0 flex items-center justify-center w-full pointer-events-none">
+          <div className="pointer-events-auto">
+            {children}
+          </div>
         </div>
 
         {/* Mobile Center Content Placeholders */}
-        <div className="md:hidden flex-1 flex flex-col justify-center items-center text-center p-4">
+        <div className="md:hidden flex-1 flex flex-col justify-center items-center text-center p-4 pointer-events-none">
           <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mb-4 animate-pulse">
             <Icon name="fingerprint" className="text-primary" size={48} />
           </div>

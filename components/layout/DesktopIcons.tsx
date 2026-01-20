@@ -37,6 +37,19 @@ export function DesktopIcons({ currentPath, onNavigate }: DesktopIconsProps) {
     }
   }, [iconPositions]);
 
+  // Listen for reset event
+  useEffect(() => {
+    const handleReset = () => {
+      localStorage.removeItem('desktop-icon-positions');
+      setIconPositions({});
+    };
+
+    window.addEventListener('reset-desktop-icons', handleReset);
+    return () => {
+      window.removeEventListener('reset-desktop-icons', handleReset);
+    };
+  }, []);
+
   // Stagger entrance animation
   useEffect(() => {
     if (mounted && iconsRef.current) {
@@ -106,6 +119,7 @@ export function DesktopIcons({ currentPath, onNavigate }: DesktopIconsProps) {
     <div 
       ref={iconsRef}
       className="relative flex flex-row md:flex-col gap-4 md:gap-6 flex-wrap justify-start items-start w-full md:w-auto z-10"
+      style={{ overflow: "visible" }}
     >
       {icons.map((icon) => (
         <DesktopIcon

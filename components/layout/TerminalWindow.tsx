@@ -54,7 +54,7 @@ export function TerminalWindow() {
   }, [mounted]);
 
   return (
-    <div className="hidden md:flex absolute top-10 right-10 w-[500px] flex-col rounded-lg shadow-[0_20px_50px_rgba(0,0,0,0.5)] bg-[#0d1313]/95 border border-white/10 backdrop-blur-md overflow-hidden z-0">
+    <div className="hidden md:flex absolute top-10 right-10 w-[500px] flex-col rounded-lg shadow-[0_20px_50px_rgba(0,0,0,0.5)] bg-[#0d1313]/95 border border-white/10 backdrop-blur-md overflow-hidden z-0 pointer-events-none">
       {/* Window Title Bar */}
       <div className="bg-[#1a2626] px-4 py-2 flex items-center justify-between border-b border-white/5">
         <div className="flex items-center gap-2">

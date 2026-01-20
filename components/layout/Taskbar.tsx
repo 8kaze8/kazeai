@@ -24,7 +24,14 @@ export function Taskbar({ currentPath, onNavigate }: TaskbarProps) {
     <footer className="h-14 bg-[#0d1b1b]/95 backdrop-blur-xl border-t border-white/10 flex items-center justify-between px-2 md:px-4 z-50 shadow-2xl relative">
       {/* Left: Start & Search */}
       <div className="flex items-center gap-1 md:gap-2">
-        <button className="p-2 rounded hover:bg-white/10 group transition-colors flex items-center justify-center">
+        <button 
+          className="p-2 rounded hover:bg-white/10 group transition-colors flex items-center justify-center"
+          onClick={() => {
+            // Dispatch reset event
+            window.dispatchEvent(new CustomEvent('reset-desktop-icons'));
+          }}
+          title="Reset Desktop Icons"
+        >
           <Icon
             name="apps"
             className="text-primary group-hover:rotate-90 transition-transform duration-300"
