@@ -17,7 +17,11 @@ export function AlbaCompanion({ onEatingChange, foodBowlPosition }: AlbaCompanio
   const [isEating, setIsEating] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [clickCount, setClickCount] = useState(0);
+  const [lastInteraction, setLastInteraction] = useState(Date.now());
   const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const idleTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const sleepTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const wanderIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const dragDataRef = useRef({
     startX: 0,
@@ -41,6 +45,110 @@ export function AlbaCompanion({ onEatingChange, foodBowlPosition }: AlbaCompanio
     }
 
   }, [setPosition]);
+
+  // Reset interaction timer
+  const resetInteraction = () => {
+    setLastInteraction(Date.now());
+  };
+
+  // Random wander function
+  const wander = () => {
+    const currentState = useAlbaStore.getState().state;
+    if (currentState !== "awake" && currentState !== "walking") return;
+
+    setState("walking");
+
+    const spriteSize = 128;
+    const taskbarHeight = 56;
+    const currentPos = useAlbaStore.getState().position;
+
+    // Random direction - go far! 200-400px movement
+    const direction = Math.random() > 0.5 ? 1 : -1;
+    const offsetX = direction * (200 + Math.random() * 200);
+    const offsetY = (Math.random() - 0.5) * 300;
+
+    const targetX = Math.max(0, Math.min(window.innerWidth - spriteSize, currentPos.x + offsetX));
+    const targetY = Math.max(0, Math.min(window.innerHeight - taskbarHeight - spriteSize, currentPos.y + offsetY));
+
+    // Animate walk - slower for longer distance
+    const startX = currentPos.x;
+    const startY = currentPos.y;
+    const distance = Math.sqrt(Math.pow(targetX - startX, 2) + Math.pow(targetY - startY, 2));
+    const duration = Math.max(1000, Math.min(distance * 3, 2500));
+    const startTime = Date.now();
+
+    const animateWander = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+
+      setPosition({
+        x: startX + (targetX - startX) * eased,
+        y: startY + (targetY - startY) * eased,
+      });
+
+      if (progress < 1) {
+        requestAnimationFrame(animateWander);
+      } else {
+        setState("awake");
+      }
+    };
+
+    requestAnimationFrame(animateWander);
+  };
+
+  // Idle behavior cycle: 5s idle -> sleep 10s -> wander 10s -> repeat
+  useEffect(() => {
+    if (!mounted || isEating || isDragging) return;
+
+    // Clear existing timeouts
+    if (idleTimeoutRef.current) clearTimeout(idleTimeoutRef.current);
+    if (sleepTimeoutRef.current) clearTimeout(sleepTimeoutRef.current);
+    if (wanderIntervalRef.current) clearTimeout(wanderIntervalRef.current);
+
+    // After 5 seconds of no interaction, start the cycle
+    idleTimeoutRef.current = setTimeout(() => {
+      const currentState = useAlbaStore.getState().state;
+      if (currentState === "awake" || currentState === "curious") {
+        // Start the sleep-wander cycle
+        const startCycle = () => {
+          // Sleep for 10 seconds
+          setState("sleeping");
+
+          sleepTimeoutRef.current = setTimeout(() => {
+            // Wake up and wander for 10 seconds
+            setState("awake");
+
+            let wanderCount = 0;
+            const maxWanders = 3; // About 10 seconds of wandering
+
+            const doWander = () => {
+              if (wanderCount >= maxWanders) {
+                // Done wandering, go back to sleep (restart cycle)
+                startCycle();
+                return;
+              }
+
+              wander();
+              wanderCount++;
+              wanderIntervalRef.current = setTimeout(doWander, 3000 + Math.random() * 2000);
+            };
+
+            // Start wandering after a short delay
+            setTimeout(doWander, 500);
+          }, 10000);
+        };
+
+        startCycle();
+      }
+    }, 5000);
+
+    return () => {
+      if (idleTimeoutRef.current) clearTimeout(idleTimeoutRef.current);
+      if (sleepTimeoutRef.current) clearTimeout(sleepTimeoutRef.current);
+      if (wanderIntervalRef.current) clearTimeout(wanderIntervalRef.current);
+    };
+  }, [lastInteraction, mounted, isEating, isDragging, setState, setPosition]);
 
   // Drag logic - same as DesktopIcon
   useEffect(() => {
@@ -110,6 +218,7 @@ export function AlbaCompanion({ onEatingChange, foodBowlPosition }: AlbaCompanio
     };
 
     setIsDragging(true);
+    resetInteraction();
   };
 
   // Smooth animation to target position
@@ -141,6 +250,9 @@ export function AlbaCompanion({ onEatingChange, foodBowlPosition }: AlbaCompanio
   const handleClick = () => {
     // Only react if we didn't drag
     if (dragDataRef.current.wasDragged) return;
+
+    // Reset idle timer on interaction
+    resetInteraction();
 
     // Track clicks for angry state
     const newClickCount = clickCount + 1;
@@ -200,7 +312,8 @@ export function AlbaCompanion({ onEatingChange, foodBowlPosition }: AlbaCompanio
 
   // Hover = curious
   const handleMouseEnter = () => {
-    if (state === "awake" && !isDragging) {
+    if ((state === "awake" || state === "sleeping") && !isDragging) {
+      resetInteraction();
       setState("curious");
     }
   };
@@ -254,9 +367,11 @@ export function AlbaCompanion({ onEatingChange, foodBowlPosition }: AlbaCompanio
             onEatingChange?.(false);
             setState("purring");
             showMessage("Prrr... That was delicious! 😺");
+            resetInteraction();
 
             setTimeout(() => {
               setState("awake");
+              resetInteraction();
             }, 3000);
           }, 3000);
         }
