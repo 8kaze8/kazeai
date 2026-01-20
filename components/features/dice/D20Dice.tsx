@@ -21,8 +21,8 @@ export function D20Dice() {
 
       try {
         // Dynamic import
-        const module = await import("@3d-dice/dice-box");
-        DiceBox = module.default || module.DiceBox;
+        const diceModule = await import("@3d-dice/dice-box");
+        DiceBox = diceModule.default || diceModule.DiceBox;
 
         if (!containerRef.current) return;
 
