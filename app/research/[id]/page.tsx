@@ -3,6 +3,7 @@
 import { useRouter, useParams } from "next/navigation";
 import { Icon } from "@/components/ui/Icon";
 import { useState, useEffect } from "react";
+import { WindowContainer } from "@/components/ui/WindowContainer";
 
 interface BlogPostDetail {
   id: string;
@@ -140,7 +141,7 @@ export default function BlogPostDetail() {
 
   return (
     <div className="flex items-center justify-center h-full w-full p-3 md:p-4">
-      <div className="relative flex flex-col w-full max-w-5xl max-h-[calc(100vh-12rem)] md:max-h-[75vh] bg-[#102323]/95 backdrop-blur-md border border-primary/30 rounded-xl shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden">
+      <WindowContainer className="relative flex flex-col w-full max-w-5xl max-h-[calc(100vh-12rem)] md:max-h-[75vh] bg-[#102323]/95 backdrop-blur-md border border-primary/30 rounded-xl shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden">
         {/* Scanline Overlay */}
         <div className="absolute inset-0 pointer-events-none z-50 opacity-10 scanline" />
 
@@ -467,7 +468,7 @@ export default function BlogPostDetail() {
             Logged in as: <span className="text-primary">Kadir_Admin</span>
           </div>
         </div>
-      </div>
+      </WindowContainer>
     </div>
   );
 }

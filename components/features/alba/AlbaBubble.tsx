@@ -10,7 +10,7 @@ export function AlbaBubble() {
     <AnimatePresence>
       {message && (
         <motion.div
-          className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-white rounded-lg shadow-lg border-2 border-cyber-charcoal text-sm text-cyber-charcoal whitespace-nowrap z-50"
+          className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-white rounded-lg shadow-lg border-2 border-background-dark text-sm text-background-dark whitespace-nowrap z-50"
           initial={{ opacity: 0, scale: 0.8, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.8, y: 10 }}

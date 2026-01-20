@@ -1,10 +1,11 @@
 import { useAlbaStore } from "@/store/albaStore";
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useRef } from "react";
+import { animate } from "animejs";
 
 export function useAlbaInteraction() {
   const { state, setState, showMessage, setPosition } = useAlbaStore();
-  const clickCountRef = { current: 0 };
-  const clickTimerRef = { current: null as NodeJS.Timeout | null };
+  const clickCountRef = useRef(0);
+  const clickTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleHover = useCallback(() => {
     if (state === "sleeping") {
@@ -19,7 +20,7 @@ export function useAlbaInteraction() {
     }
 
     // Increment click count
-    clickCountRef.current += 1;
+    clickCountRef.current = clickCountRef.current + 1;
 
     // Move Alba to edge to avoid blocking content
     const { position } = useAlbaStore.getState();
@@ -163,13 +164,16 @@ export function useAlbaInteraction() {
     }
   }, [state, handleMouseMove]);
 
-  // Continuous walking animation - Alba explores the screen
+  // Continuous walking animation - Alba explores the screen with Anime.js
   useEffect(() => {
     let walkInterval: NodeJS.Timeout;
+    const albaElement = document.querySelector('.alba-companion') as HTMLElement;
 
     const startWalking = () => {
+      if (!albaElement) return;
+
       // Random position on screen (avoid edges and taskbar)
-      const margin = 200; // Keep away from edges
+      const margin = 200;
       const taskbarHeight = 56;
       const randomX =
         margin + Math.random() * (window.innerWidth - margin * 2 - 128);
@@ -177,13 +181,37 @@ export function useAlbaInteraction() {
         margin +
         Math.random() * (window.innerHeight - margin * 2 - taskbarHeight - 128);
 
-      setState("walking");
-      setPosition({ x: randomX, y: randomY });
+      const { position: currentPos } = useAlbaStore.getState();
+      const startX = currentPos.x;
+      const startY = currentPos.y;
+      const distance = Math.sqrt(
+        Math.pow(randomX - startX, 2) + Math.pow(randomY - startY, 2)
+      );
 
-      // After walking, go to sleep or stay awake
-      setTimeout(() => {
-        setState(Math.random() > 0.5 ? "sleeping" : "awake");
-      }, 3000);
+      // Duration based on distance (min 1s, max 3s)
+      const duration = Math.max(1000, Math.min(distance / 100, 3000));
+
+      setState("walking");
+
+      // Animate position with Anime.js
+      if (albaElement) {
+        animate(albaElement, {
+          translateX: [startX, randomX],
+          translateY: [startY, randomY],
+          duration: duration,
+          easing: "easeInOutQuad",
+          update: (anim) => {
+            const progress = anim.progress / 100;
+            const currentX = startX + (randomX - startX) * progress;
+            const currentY = startY + (randomY - startY) * progress;
+            setPosition({ x: currentX, y: currentY });
+          },
+          complete: () => {
+            setPosition({ x: randomX, y: randomY });
+            setState(Math.random() > 0.5 ? "sleeping" : "awake");
+          },
+        });
+      }
     };
 
     // Start walking immediately, then every 8-12 seconds

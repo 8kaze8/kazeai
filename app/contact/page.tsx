@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "@/components/ui/Icon";
+import { WindowContainer } from "@/components/ui/WindowContainer";
 
 type Channel = "direct" | "social" | "scheduling";
 
@@ -110,7 +111,7 @@ export default function Contact() {
 
   return (
     <div className="flex items-center justify-center h-full w-full p-3 md:p-4">
-      <div className="relative flex flex-col w-full max-w-4xl max-h-[calc(100vh-12rem)] md:max-h-[75vh] bg-[#102323]/95 backdrop-blur-md border border-primary/30 rounded-xl shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden">
+      <WindowContainer className="relative flex flex-col w-full max-w-4xl max-h-[calc(100vh-12rem)] md:max-h-[75vh] bg-[#102323]/95 backdrop-blur-md border border-primary/30 rounded-xl shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden">
         {/* Window Header */}
         <div className="flex items-center justify-between px-3 py-2 bg-gradient-to-r from-[#162a2a] to-[#102323] border-b border-primary/20">
           <div className="flex items-center gap-2">
@@ -950,7 +951,7 @@ export default function Contact() {
             </span>
           </div>
         </div>
-      </div>
+      </WindowContainer>
     </div>
   );
 }

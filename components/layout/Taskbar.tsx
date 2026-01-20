@@ -3,6 +3,7 @@
 import { useAlbaStore } from "@/store/albaStore";
 import { useState } from "react";
 import { Icon } from "@/components/ui/Icon";
+import { ALBA_MESSAGES } from "@/lib/constants";
 
 interface TaskbarProps {
   currentPath: string;
@@ -13,17 +14,9 @@ export function Taskbar({ currentPath, onNavigate }: TaskbarProps) {
   const { state, showMessage } = useAlbaStore();
   const [searchQuery, setSearchQuery] = useState("");
 
-  const albaMessages = [
-    "Dreaming of electric mice...",
-    "Stretching... Time to automate?",
-    "Meow! 🐱",
-    "n8n workflow in progress...",
-    "Checking hydroponic sensors...",
-  ];
-
   const handleAlbaClick = () => {
     const randomMessage =
-      albaMessages[Math.floor(Math.random() * albaMessages.length)];
+      ALBA_MESSAGES[Math.floor(Math.random() * ALBA_MESSAGES.length)];
     showMessage(randomMessage);
   };
 

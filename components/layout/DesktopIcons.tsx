@@ -1,7 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Icon } from "@/components/ui/Icon";
+import { useState, useEffect, useRef } from "react";
+import { animate } from "animejs";
+import { motion } from "framer-motion";
+import { DesktopIcon } from "./DesktopIcon";
 
 interface DesktopIconsProps {
   currentPath: string;
@@ -10,18 +12,56 @@ interface DesktopIconsProps {
 
 export function DesktopIcons({ currentPath, onNavigate }: DesktopIconsProps) {
   const [mounted, setMounted] = useState(false);
+  const [iconPositions, setIconPositions] = useState<Record<string, { x: number; y: number }>>({});
+  const [hasDragged, setHasDragged] = useState<Record<string, boolean>>({});
+  const iconsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMounted(true);
+    
+    // Load saved positions from localStorage
+    const saved = localStorage.getItem('desktop-icon-positions');
+    if (saved) {
+      try {
+        setIconPositions(JSON.parse(saved));
+      } catch (e) {
+        // Ignore parse errors
+      }
+    }
   }, []);
+
+  // Save positions to localStorage
+  useEffect(() => {
+    if (Object.keys(iconPositions).length > 0) {
+      localStorage.setItem('desktop-icon-positions', JSON.stringify(iconPositions));
+    }
+  }, [iconPositions]);
+
+  // Stagger entrance animation
+  useEffect(() => {
+    if (mounted && iconsRef.current) {
+      const iconElements = iconsRef.current.querySelectorAll('.desktop-icon');
+      iconElements.forEach((element, index) => {
+        animate(element, {
+          scale: [0, 1],
+          opacity: [0, 1],
+          delay: index * 100,
+          duration: 600,
+          easing: 'easeOutElastic(1, .8)',
+        });
+      });
+    }
+  }, [mounted]);
+
   const icons = [
     {
-      id: "inventory",
+      id: "skill-tree",
       path: "/skills",
-      label: "Inventory",
-      icon: "backpack",
-      color: "text-primary",
-      hoverColor: "text-primary",
+      label: "Skill Tree",
+      icon: "account_tree",
+      color: "text-[#a6e3a1]",
+      hoverColor: "text-[#a6e3a1]",
+      hexColor: "#a6e3a1",
       badge: 3,
     },
     {
@@ -31,14 +71,7 @@ export function DesktopIcons({ currentPath, onNavigate }: DesktopIconsProps) {
       icon: "history_edu",
       color: "text-[#cba6f7]",
       hoverColor: "text-[#cba6f7]",
-    },
-    {
-      id: "skill-tree",
-      path: "/skills",
-      label: "Skill Tree",
-      icon: "account_tree",
-      color: "text-[#a6e3a1]",
-      hoverColor: "text-[#a6e3a1]",
+      hexColor: "#cba6f7",
     },
     {
       id: "timeline-archives",
@@ -47,6 +80,7 @@ export function DesktopIcons({ currentPath, onNavigate }: DesktopIconsProps) {
       icon: "history",
       color: "text-blue-400",
       hoverColor: "text-blue-400",
+      hexColor: "#60a5fa",
     },
     {
       id: "research-lab",
@@ -55,6 +89,7 @@ export function DesktopIcons({ currentPath, onNavigate }: DesktopIconsProps) {
       icon: "layers",
       color: "text-green-400",
       hoverColor: "text-green-400",
+      hexColor: "#4ade80",
     },
     {
       id: "comms-link",
@@ -63,53 +98,33 @@ export function DesktopIcons({ currentPath, onNavigate }: DesktopIconsProps) {
       icon: "satellite_alt",
       color: "text-[#f9e2af]",
       hoverColor: "text-[#f9e2af]",
+      hexColor: "#f9e2af",
     },
   ];
 
   return (
-    <div className="flex flex-row md:flex-col gap-8 md:gap-6 flex-wrap content-start w-full md:w-auto z-20">
+    <div 
+      ref={iconsRef}
+      className="relative flex flex-row md:flex-col gap-4 md:gap-6 flex-wrap justify-start items-start w-full md:w-auto z-10"
+    >
       {icons.map((icon) => (
-        <button
+        <DesktopIcon
           key={icon.id}
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            if (mounted && onNavigate) {
-              onNavigate(icon.path);
-            }
+          icon={icon}
+          savedPosition={iconPositions[icon.id] || { x: 0, y: 0 }}
+          onPositionChange={(id, pos) => {
+            setIconPositions(prev => ({
+              ...prev,
+              [id]: pos,
+            }));
           }}
-          className="group flex flex-col items-center gap-2 w-24 p-2 rounded-lg hover:bg-white/5 hover:backdrop-blur-sm transition-all border border-transparent hover:border-primary/30 focus:outline-none focus:bg-white/10 cursor-pointer"
-        >
-          <div className="relative w-14 h-14 bg-gradient-to-br from-surface-dark to-background-dark rounded-xl flex items-center justify-center border border-white/10 shadow-lg group-hover:scale-105 transition-transform group-hover:border-primary/50 group-hover:shadow-[0_0_15px_rgba(37,244,244,0.15)]">
-            <Icon
-              name={icon.icon}
-              className={`${icon.color} group-hover:animate-pulse`}
-              size={28}
-            />
-            {icon.badge && (
-              <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-sm">
-                {icon.badge}
-              </div>
-            )}
-          </div>
-          <span
-            className={`text-sm font-medium text-center text-gray-100 desktop-icon-shadow tracking-wide ${
-              icon.hoverColor === "text-primary"
-                ? "group-hover:text-primary"
-                : icon.hoverColor === "text-[#cba6f7]"
-                ? "group-hover:text-[#cba6f7]"
-                : icon.hoverColor === "text-green-400"
-                ? "group-hover:text-green-400"
-                : icon.hoverColor === "text-[#f9e2af]"
-                ? "group-hover:text-[#f9e2af]"
-                : icon.hoverColor === "text-blue-400"
-                ? "group-hover:text-blue-400"
-                : "group-hover:text-[#a6e3a1]"
-            }`}
-          >
-            {icon.label}
-          </span>
-        </button>
+          onNavigate={onNavigate}
+          mounted={mounted}
+          hasDragged={hasDragged[icon.id] || false}
+          setHasDragged={(id, value) => {
+            setHasDragged(prev => ({ ...prev, [id]: value }));
+          }}
+        />
       ))}
     </div>
   );

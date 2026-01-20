@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
+import { animate } from "animejs";
 import { useAlbaStore } from "@/store/albaStore";
 import { useAlbaInteraction } from "@/hooks/useAlbaInteraction";
 import { AlbaSprite } from "./AlbaSprite";
@@ -14,9 +15,12 @@ export function AlbaCompanion() {
   const [hasMoved, setHasMoved] = useState(false);
   const [dragPosition, setDragPosition] = useState({ x: 0, y: 0 });
   const [isClickMove, setIsClickMove] = useState(false);
+  const [walkingFrame, setWalkingFrame] = useState(0);
   const dragStartPos = useRef({ x: 0, y: 0 });
   const dragOffset = useRef({ x: 0, y: 0 });
   const finalDragPos = useRef({ x: 0, y: 0 });
+  const albaRef = useRef<HTMLDivElement>(null);
+  const walkingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     // Set initial position to bottom-right (above taskbar) - no animation
@@ -104,49 +108,103 @@ export function AlbaCompanion() {
     };
   }, [isDragging, hasMoved, setPosition, setState]);
 
+  // Walking sprite animation
+  useEffect(() => {
+    if (state === "walking") {
+      walkingIntervalRef.current = setInterval(() => {
+        setWalkingFrame((prev) => (prev + 1) % 4); // 4 frame walking animation
+      }, 150); // 150ms per frame
+    } else {
+      if (walkingIntervalRef.current) {
+        clearInterval(walkingIntervalRef.current);
+        walkingIntervalRef.current = null;
+      }
+      setWalkingFrame(0);
+    }
+
+    return () => {
+      if (walkingIntervalRef.current) {
+        clearInterval(walkingIntervalRef.current);
+      }
+    };
+  }, [state]);
+
+  // Animate to position with path animation
+  const animateToPosition = (targetX: number, targetY: number) => {
+    if (!albaRef.current) return;
+
+    setState("walking");
+    setIsClickMove(true);
+
+    const startX = position.x;
+    const startY = position.y;
+    const distance = Math.sqrt(
+      Math.pow(targetX - startX, 2) + Math.pow(targetY - startY, 2)
+    );
+
+    // Duration based on distance (min 0.5s, max 2s)
+    const duration = Math.max(500, Math.min(distance / 100, 2000));
+
+    // Animate position with Anime.js
+    animate(albaRef.current, {
+      translateX: [startX, targetX],
+      translateY: [startY, targetY],
+      duration: duration,
+      easing: "easeInOutQuad",
+      update: (anim) => {
+        // Update position during animation for smooth following
+        const progress = anim.progress / 100;
+        const currentX = startX + (targetX - startX) * progress;
+        const currentY = startY + (targetY - startY) * progress;
+        setPosition({ x: currentX, y: currentY });
+      },
+      complete: () => {
+        setPosition({ x: targetX, y: targetY });
+        setState("awake");
+        setIsClickMove(false);
+      },
+    });
+  };
+
   // Use dragPosition during drag, position when not dragging
   // After drag ends, position is already updated to finalPos, so use position
   const currentPos = isDragging ? dragPosition : position;
 
   return (
-    <motion.div
-      className="fixed z-40 select-none pointer-events-none"
+    <div
+      ref={albaRef}
+      className="alba-companion fixed z-40 select-none pointer-events-none"
       style={{
         width: 128,
         height: 128,
+        left: currentPos.x,
+        top: currentPos.y,
+        transform: isDragging ? "scale(1.1)" : "scale(1)",
+        transition: isDragging ? "transform 0.2s" : "none",
       }}
-      initial={{ opacity: 1, scale: 1, x: position.x, y: position.y }}
-      animate={{
-        opacity: 1,
-        scale: isDragging ? 1.1 : 1,
-        x: currentPos.x,
-        y: currentPos.y,
-      }}
-      transition={{
-        scale: { duration: 0.2 },
-        // Only animate on click move, not on drag or initial render
-        x: (isDragging || !isClickMove) ? { duration: 0 } : { duration: 1.5, ease: "easeInOut" },
-        y: (isDragging || !isClickMove) ? { duration: 0 } : { duration: 1.5, ease: "easeInOut" },
-      }}
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.95 }}
     >
-      <div 
+      <motion.div 
         className="relative w-full h-full cursor-grab active:cursor-grabbing pointer-events-auto"
         onMouseDown={handleMouseDown}
         onMouseEnter={handleHover}
-      onClick={(e) => {
-        e.stopPropagation();
-        if (!hasMoved && !isDragging) {
-          // Mark that this is a click move (not a drag) - will trigger smooth animation
-          setIsClickMove(true);
-          handleClick();
-          // Reset flag after animation completes
-          setTimeout(() => {
-            setIsClickMove(false);
-          }, 1500);
-        }
-      }}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (!hasMoved && !isDragging) {
+            const targetX = e.clientX - 64; // Center sprite
+            const targetY = e.clientY - 64;
+            const distance = Math.sqrt(
+              Math.pow(targetX - position.x, 2) + Math.pow(targetY - position.y, 2)
+            );
+
+            // Only animate if distance > 50px
+            if (distance > 50) {
+              animateToPosition(targetX, targetY);
+            }
+            handleClick();
+          }
+        }}
       >
         {/* Angry glow effect */}
         {state === "angry" && (
@@ -169,8 +227,8 @@ export function AlbaCompanion() {
         )}
         <AlbaBubble />
         <AlbaSprite />
-      </div>
-    </motion.div>
+      </motion.div>
+    </div>
   );
 }
 

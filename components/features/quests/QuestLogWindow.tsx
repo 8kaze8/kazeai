@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { animate } from "animejs";
 import { Icon } from "@/components/ui/Icon";
+import { WindowContainer } from "@/components/ui/WindowContainer";
 
 interface Quest {
   id: string;
@@ -96,9 +98,42 @@ export function QuestLogWindow() {
   const router = useRouter();
   const [selectedQuest, setSelectedQuest] = useState<Quest>(quests[0]);
   const [questType, setQuestType] = useState<"main" | "side">("main");
+  const questListRef = useRef<HTMLDivElement>(null);
+
+  // Scroll animation for quest items
+  useEffect(() => {
+    if (questListRef.current) {
+      const questItems = questListRef.current.querySelectorAll('.quest-item');
+      
+      // Trigger animation when items come into view
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+              animate(entry.target, {
+                opacity: [0, 1],
+                translateY: [30, 0],
+                delay: index * 100,
+                duration: 600,
+                easing: 'easeOutExpo',
+              });
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.1 }
+      );
+
+      questItems.forEach((item) => observer.observe(item));
+
+      return () => {
+        questItems.forEach((item) => observer.unobserve(item));
+      };
+    }
+  }, []);
 
   return (
-    <div className="relative w-[95%] max-w-5xl max-h-[calc(100vh-12rem)] md:max-h-[75vh] flex flex-col bg-surface-darker rounded-xl border border-[#224949] shadow-2xl overflow-hidden z-10">
+    <WindowContainer className="relative w-[95%] max-w-5xl max-h-[calc(100vh-12rem)] md:max-h-[75vh] flex flex-col bg-surface-darker rounded-xl border border-[#224949] shadow-2xl overflow-hidden z-10">
       {/* Window Header */}
       <div className="h-10 bg-surface-dark flex items-center justify-between px-3 border-b border-[#224949] select-none">
         <div className="flex items-center gap-2">
@@ -177,12 +212,12 @@ export function QuestLogWindow() {
           </div>
 
                  {/* List Items */}
-                 <div className="flex-1 overflow-y-auto p-2 space-y-1 min-h-0">
+                 <div ref={questListRef} className="flex-1 overflow-y-auto p-2 space-y-1 min-h-0">
             {quests.map((quest) => (
               <button
                 key={quest.id}
                 onClick={() => setSelectedQuest(quest)}
-                className={`w-full text-left group flex items-center gap-3 p-3 rounded-lg border transition-all ${
+                className={`quest-item opacity-0 w-full text-left group flex items-center gap-3 p-3 rounded-lg border transition-all ${
                   selectedQuest.id === quest.id
                     ? "bg-[#1a2c2c] border-primary/30 shadow-neon"
                     : "hover:bg-[#1a2c2c] border-transparent hover:border-[#224949]"
@@ -369,7 +404,7 @@ export function QuestLogWindow() {
         <span>RAM: 32GB // CPU: ONLINE</span>
         <span>SYSTEM STATUS: STABLE</span>
       </div>
-    </div>
+    </WindowContainer>
   );
 }
 
