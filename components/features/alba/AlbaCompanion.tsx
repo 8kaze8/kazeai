@@ -62,10 +62,10 @@ export function AlbaCompanion({ onEatingChange, foodBowlPosition }: AlbaCompanio
     const taskbarHeight = 56;
     const currentPos = useAlbaStore.getState().position;
 
-    // Random direction - go far! 200-400px movement
+    // Random direction - go far! 300-600px movement (increased range)
     const directionMultiplier = Math.random() > 0.5 ? 1 : -1;
-    const offsetX = directionMultiplier * (200 + Math.random() * 200);
-    const offsetY = (Math.random() - 0.5) * 300;
+    const offsetX = directionMultiplier * (300 + Math.random() * 300);
+    const offsetY = (Math.random() - 0.5) * 400;
 
     const targetX = Math.max(0, Math.min(window.innerWidth - spriteSize, currentPos.x + offsetX));
     const targetY = Math.max(0, Math.min(window.innerHeight - taskbarHeight - spriteSize, currentPos.y + offsetY));
@@ -77,7 +77,7 @@ export function AlbaCompanion({ onEatingChange, foodBowlPosition }: AlbaCompanio
     const startX = currentPos.x;
     const startY = currentPos.y;
     const distance = Math.sqrt(Math.pow(targetX - startX, 2) + Math.pow(targetY - startY, 2));
-    const duration = Math.max(1000, Math.min(distance * 3, 2500));
+    const duration = Math.max(1500, Math.min(distance * 5, 4000)); // Slower: 1.5-4 seconds
     const startTime = Date.now();
 
     const animateWander = () => {
@@ -123,7 +123,7 @@ export function AlbaCompanion({ onEatingChange, foodBowlPosition }: AlbaCompanio
             setState("awake");
 
             let wanderCount = 0;
-            const maxWanders = 3; // About 10 seconds of wandering
+            const maxWanders = 5; // More wandering before sleeping again
 
             const doWander = () => {
               if (wanderCount >= maxWanders) {
@@ -371,11 +371,11 @@ export function AlbaCompanion({ onEatingChange, foodBowlPosition }: AlbaCompanio
       // Set direction based on food bowl position
       setDirection(targetX > position.x ? "right" : "left");
 
-      // Animate walking to food bowl
+      // Animate walking to food bowl - slow and deliberate
       const startX = position.x;
       const startY = position.y;
       const distance = Math.sqrt(Math.pow(targetX - startX, 2) + Math.pow(targetY - startY, 2));
-      const duration = Math.max(800, Math.min(distance * 2, 2000));
+      const duration = Math.max(1500, Math.min(distance * 6, 4000)); // Much slower: 1.5-4 seconds
       const startTime = Date.now();
 
       const animateWalk = () => {
