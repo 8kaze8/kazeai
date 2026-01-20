@@ -216,19 +216,24 @@ export function AlbaSprite() {
         ) : state === "eating" ? (
           // Eating animation using sprite sheet
           <div
-            className="w-32 h-32 overflow-hidden flex items-center justify-center"
+            className="w-32 h-32 relative"
             style={{
               imageRendering: "pixelated",
+              overflow: "hidden",
             }}
           >
             <div
               style={{
-                width: EATING_SPRITE.frameWidth * EATING_SPRITE.cols,
-                height: EATING_SPRITE.frameHeight * EATING_SPRITE.rows,
+                position: "absolute",
+                width: EATING_SPRITE.frameWidth,
+                height: EATING_SPRITE.frameHeight,
                 backgroundImage: `url(${EATING_SPRITE.src})`,
-                backgroundSize: "100% 100%",
-                transform: `translate(-${eatPos.x}px, -${eatPos.y}px)`,
+                backgroundPosition: `-${eatPos.x}px -${eatPos.y}px`,
+                backgroundSize: `${EATING_SPRITE.frameWidth * EATING_SPRITE.cols}px ${EATING_SPRITE.frameHeight * EATING_SPRITE.rows}px`,
                 imageRendering: "pixelated",
+                left: "50%",
+                top: "50%",
+                transform: "translate(-50%, -50%)",
               }}
             />
           </div>
