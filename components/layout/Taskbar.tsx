@@ -1,18 +1,22 @@
 "use client";
 
 import { useAlbaStore } from "@/store/albaStore";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Icon } from "@/components/ui/Icon";
 import { ALBA_MESSAGES } from "@/lib/constants";
+import { DockFoodBowl } from "@/components/features/alba/DockFoodBowl";
 
 interface TaskbarProps {
   currentPath: string;
   onNavigate: (path: string) => void;
+  onFeedAlba?: (position: { x: number; y: number }) => void;
+  isAlbaEating?: boolean;
 }
 
-export function Taskbar({ currentPath, onNavigate }: TaskbarProps) {
-  const { state, showMessage } = useAlbaStore();
+export function Taskbar({ currentPath, onNavigate, onFeedAlba, isAlbaEating = false }: TaskbarProps) {
+  const { state, position, showMessage } = useAlbaStore();
   const [searchQuery, setSearchQuery] = useState("");
+  const foodBowlRef = useRef<HTMLDivElement>(null);
 
   const handleAlbaClick = () => {
     const randomMessage =
@@ -98,6 +102,19 @@ export function Taskbar({ currentPath, onNavigate }: TaskbarProps) {
             </p>
             <div className="w-0 h-0 border-l-[6px] border-l-transparent border-t-[6px] border-t-[#152a2a] border-r-[6px] border-r-transparent absolute -bottom-[6px]"></div>
           </div>
+        </div>
+
+        {/* Food Bowl */}
+        <div ref={foodBowlRef} className="h-full">
+          <DockFoodBowl
+            isFilled={isAlbaEating}
+            onFoodReady={() => {
+              if (foodBowlRef.current) {
+                const rect = foodBowlRef.current.getBoundingClientRect();
+                onFeedAlba?.({ x: rect.left + rect.width / 2, y: rect.top });
+              }
+            }}
+          />
         </div>
       </div>
 

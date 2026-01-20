@@ -2,220 +2,324 @@
 
 import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { animate } from "animejs";
 import { useAlbaStore } from "@/store/albaStore";
-import { useAlbaInteraction } from "@/hooks/useAlbaInteraction";
 import { AlbaSprite } from "./AlbaSprite";
 import { AlbaBubble } from "./AlbaBubble";
 
-export function AlbaCompanion() {
-  const { position, state, setPosition, setState } = useAlbaStore();
-  const { handleHover, handleClick } = useAlbaInteraction();
+interface AlbaCompanionProps {
+  onEatingChange?: (isEating: boolean) => void;
+  foodBowlPosition?: { x: number; y: number } | null;
+}
+
+export function AlbaCompanion({ onEatingChange, foodBowlPosition }: AlbaCompanionProps) {
+  const { position, state, setPosition, setState, showMessage } = useAlbaStore();
   const [isDragging, setIsDragging] = useState(false);
-  const [hasMoved, setHasMoved] = useState(false);
-  const [dragPosition, setDragPosition] = useState({ x: 0, y: 0 });
-  const [isClickMove, setIsClickMove] = useState(false);
-  const [walkingFrame, setWalkingFrame] = useState(0);
-  const dragStartPos = useRef({ x: 0, y: 0 });
-  const dragOffset = useRef({ x: 0, y: 0 });
-  const finalDragPos = useRef({ x: 0, y: 0 });
-  const albaRef = useRef<HTMLDivElement>(null);
-  const walkingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [isEating, setIsEating] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [clickCount, setClickCount] = useState(0);
+  const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  const dragDataRef = useRef({
+    startX: 0,
+    startY: 0,
+    startMouseX: 0,
+    startMouseY: 0,
+    wasDragged: false,
+  });
+
+  // Initialize position on mount
   useEffect(() => {
-    // Set initial position to bottom-right (above taskbar) - no animation
-    if (position.x === 0 && position.y === 0) {
-      useAlbaStore.getState().setPosition({
-        x: typeof window !== "undefined" ? window.innerWidth - 150 : 0,
-        y: typeof window !== "undefined" ? window.innerHeight - 200 : 0,
-      });
+    setMounted(true);
+    if (typeof window !== "undefined") {
+      const currentPos = useAlbaStore.getState().position;
+      if (currentPos.x === 0 && currentPos.y === 0) {
+        setPosition({
+          x: window.innerWidth - 180,
+          y: window.innerHeight - 220,
+        });
+      }
     }
-  }, [position]);
 
-  // Manual drag handlers
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (e.button !== 0) return; // Only left mouse button
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(true);
-    setHasMoved(false);
-    setState("walking");
-    dragStartPos.current = { x: e.clientX, y: e.clientY };
-    dragOffset.current = { x: position.x, y: position.y };
-    setDragPosition({ x: position.x, y: position.y });
-  };
+  }, [setPosition]);
 
+  // Drag logic - same as DesktopIcon
   useEffect(() => {
     if (!isDragging) return;
 
     const handleMouseMove = (e: MouseEvent) => {
-      const deltaX = e.clientX - dragStartPos.current.x;
-      const deltaY = e.clientY - dragStartPos.current.y;
-      
-      // Check if mouse has moved significantly
-      if (Math.abs(deltaX) > 3 || Math.abs(deltaY) > 3) {
-        setHasMoved(true);
+      e.preventDefault();
+      e.stopPropagation();
+
+      const deltaX = e.clientX - dragDataRef.current.startMouseX;
+      const deltaY = e.clientY - dragDataRef.current.startMouseY;
+
+      // Mark as dragged if moved more than 5px
+      if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
+        dragDataRef.current.wasDragged = true;
+        if (state !== "walking") setState("walking");
       }
-      
+
+      // Calculate new position with bounds
       const spriteSize = 128;
       const taskbarHeight = 56;
       const newX = Math.max(0, Math.min(
-        typeof window !== "undefined" ? window.innerWidth - spriteSize : 0,
-        dragOffset.current.x + deltaX
+        window.innerWidth - spriteSize,
+        dragDataRef.current.startX + deltaX
       ));
       const newY = Math.max(0, Math.min(
-        typeof window !== "undefined" ? window.innerHeight - taskbarHeight - spriteSize : 0,
-        dragOffset.current.y + deltaY
+        window.innerHeight - taskbarHeight - spriteSize,
+        dragDataRef.current.startY + deltaY
       ));
-      
-      // Update drag position immediately for smooth following
-      // Don't update position state during drag, only update dragPosition
-      setDragPosition({ x: newX, y: newY });
-      // Store final position in ref for use in handleMouseUp
-      finalDragPos.current = { x: newX, y: newY };
+
+      setPosition({ x: newX, y: newY });
     };
 
-    const handleMouseUp = (e?: MouseEvent) => {
-      if (e) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-      const wasDragging = hasMoved;
-      if (wasDragging) {
-        // Use ref to get the most current drag position (avoid closure issues)
-        const finalPos = finalDragPos.current;
-        // CRITICAL: Update position to final drag position - NO ANIMATION
-        // Set both position and dragPosition to the same value
-        setPosition(finalPos);
-        setDragPosition(finalPos);
-        // Ensure click move flag is false (this was a drag, not a click)
-        setIsClickMove(false);
-      }
+    const handleMouseUp = (e: MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+
       setIsDragging(false);
-      setHasMoved(false);
+
+      // Return to awake state after drag
       setTimeout(() => {
         setState("awake");
-      }, 500);
-      return wasDragging;
+        dragDataRef.current.wasDragged = false;
+      }, 100);
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseup", handleMouseUp);
+    document.addEventListener("mousemove", handleMouseMove, true);
+    document.addEventListener("mouseup", handleMouseUp, true);
 
     return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
+      document.removeEventListener("mousemove", handleMouseMove, true);
+      document.removeEventListener("mouseup", handleMouseUp, true);
     };
-  }, [isDragging, hasMoved, setPosition, setState]);
+  }, [isDragging, setPosition, setState, state]);
 
-  // Walking sprite animation
-  useEffect(() => {
-    if (state === "walking") {
-      walkingIntervalRef.current = setInterval(() => {
-        setWalkingFrame((prev) => (prev + 1) % 4); // 4 frame walking animation
-      }, 150); // 150ms per frame
-    } else {
-      if (walkingIntervalRef.current) {
-        clearInterval(walkingIntervalRef.current);
-        walkingIntervalRef.current = null;
-      }
-      setWalkingFrame(0);
-    }
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (e.button !== 0) return;
+    e.preventDefault();
+    e.stopPropagation();
 
-    return () => {
-      if (walkingIntervalRef.current) {
-        clearInterval(walkingIntervalRef.current);
-      }
+    dragDataRef.current = {
+      startX: position.x,
+      startY: position.y,
+      startMouseX: e.clientX,
+      startMouseY: e.clientY,
+      wasDragged: false,
     };
-  }, [state]);
 
-  // Animate to position with path animation
-  const animateToPosition = (targetX: number, targetY: number) => {
-    if (!albaRef.current) return;
-
-    setState("walking");
-    setIsClickMove(true);
-
-    const startX = position.x;
-    const startY = position.y;
-    const distance = Math.sqrt(
-      Math.pow(targetX - startX, 2) + Math.pow(targetY - startY, 2)
-    );
-
-    // Duration based on distance (min 0.5s, max 2s)
-    const duration = Math.max(500, Math.min(distance / 100, 2000));
-
-    // Animate position with Anime.js
-    animate(albaRef.current, {
-      translateX: [startX, targetX],
-      translateY: [startY, targetY],
-      duration: duration,
-      easing: "easeInOutQuad",
-      update: (anim) => {
-        // Update position during animation for smooth following
-        const progress = anim.progress / 100;
-        const currentX = startX + (targetX - startX) * progress;
-        const currentY = startY + (targetY - startY) * progress;
-        setPosition({ x: currentX, y: currentY });
-      },
-      complete: () => {
-        setPosition({ x: targetX, y: targetY });
-        setState("awake");
-        setIsClickMove(false);
-      },
-    });
+    setIsDragging(true);
   };
 
-  // Use dragPosition during drag, position when not dragging
-  // After drag ends, position is already updated to finalPos, so use position
-  const currentPos = isDragging ? dragPosition : position;
+  // Smooth animation to target position
+  const animateToPosition = (targetX: number, targetY: number, duration: number = 300) => {
+    const startX = position.x;
+    const startY = position.y;
+    const startTime = Date.now();
+
+    const animate = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+
+      // Ease out cubic
+      const eased = 1 - Math.pow(1 - progress, 3);
+
+      const currentX = startX + (targetX - startX) * eased;
+      const currentY = startY + (targetY - startY) * eased;
+
+      setPosition({ x: currentX, y: currentY });
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+
+    requestAnimationFrame(animate);
+  };
+
+  const handleClick = () => {
+    // Only react if we didn't drag
+    if (dragDataRef.current.wasDragged) return;
+
+    // Track clicks for angry state
+    const newClickCount = clickCount + 1;
+    setClickCount(newClickCount);
+
+    // Clear previous timeout
+    if (clickTimeoutRef.current) {
+      clearTimeout(clickTimeoutRef.current);
+    }
+
+    // Reset click count after 2 seconds
+    clickTimeoutRef.current = setTimeout(() => {
+      setClickCount(0);
+    }, 2000);
+
+    // 3 clicks = angry!
+    if (newClickCount >= 3) {
+      setState("angry");
+      showMessage("HISSSS! 😾");
+      setClickCount(0);
+
+      // Stay angry for 5 seconds
+      setTimeout(() => {
+        setState("awake");
+      }, 5000);
+      return;
+    }
+
+    // First click = curious, show message
+    if (newClickCount === 1) {
+      setState("curious");
+      showMessage();
+    } else if (newClickCount === 2) {
+      // Second click = still curious but different message
+      showMessage("Mrrow? 🐱");
+    }
+
+    // Move AWAY from click - much more noticeable distance
+    const moveDirection = Math.random() > 0.5 ? 1 : -1;
+    const offsetX = moveDirection * (80 + Math.random() * 60); // 80-140px
+    const offsetY = (Math.random() - 0.5) * 40; // -20 to +20px
+
+    const spriteSize = 128;
+    const taskbarHeight = 56;
+    const targetX = Math.max(0, Math.min(window.innerWidth - spriteSize, position.x + offsetX));
+    const targetY = Math.max(0, Math.min(window.innerHeight - taskbarHeight - spriteSize, position.y + offsetY));
+
+    animateToPosition(targetX, targetY, 400); // Slower, more visible movement
+
+    // Return to awake after curious
+    setTimeout(() => {
+      if (useAlbaStore.getState().state === "curious") {
+        setState("awake");
+      }
+    }, 1500);
+  };
+
+  // Hover = curious
+  const handleMouseEnter = () => {
+    if (state === "awake" && !isDragging) {
+      setState("curious");
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (state === "curious" && !isDragging) {
+      setState("awake");
+    }
+  };
+
+  // Food bowl - walk to it and eat
+  useEffect(() => {
+    if (foodBowlPosition && !isEating) {
+      setIsEating(true);
+      onEatingChange?.(true);
+      showMessage("Yummy! 😋");
+      setState("walking");
+
+      // Calculate target position (above the food bowl)
+      const targetX = Math.max(0, Math.min(window.innerWidth - 128, foodBowlPosition.x - 64));
+      const targetY = Math.max(0, Math.min(window.innerHeight - 56 - 128, foodBowlPosition.y - 140));
+
+      // Animate walking to food bowl
+      const startX = position.x;
+      const startY = position.y;
+      const distance = Math.sqrt(Math.pow(targetX - startX, 2) + Math.pow(targetY - startY, 2));
+      const duration = Math.max(800, Math.min(distance * 2, 2000));
+      const startTime = Date.now();
+
+      const animateWalk = () => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+
+        // Easing
+        const eased = 1 - Math.pow(1 - progress, 3);
+
+        const currentX = startX + (targetX - startX) * eased;
+        const currentY = startY + (targetY - startY) * eased;
+
+        setPosition({ x: currentX, y: currentY });
+
+        if (progress < 1) {
+          requestAnimationFrame(animateWalk);
+        } else {
+          // Arrived at food bowl - start eating
+          setState("eating");
+
+          // Eat for 3 seconds
+          setTimeout(() => {
+            setIsEating(false);
+            onEatingChange?.(false);
+            setState("purring");
+            showMessage("Prrr... That was delicious! 😺");
+
+            setTimeout(() => {
+              setState("awake");
+            }, 3000);
+          }, 3000);
+        }
+      };
+
+      requestAnimationFrame(animateWalk);
+    }
+  }, [foodBowlPosition]);
+
+  if (!mounted) return null;
 
   return (
     <div
-      ref={albaRef}
-      className="alba-companion fixed z-40 select-none pointer-events-none"
+      className="alba-companion fixed z-40 select-none"
       style={{
         width: 128,
         height: 128,
-        left: currentPos.x,
-        top: currentPos.y,
+        left: position.x,
+        top: position.y,
         transform: isDragging ? "scale(1.1)" : "scale(1)",
-        transition: isDragging ? "transform 0.2s" : "none",
+        zIndex: isDragging ? 9999 : 40,
+        cursor: isDragging ? "grabbing" : "grab",
+        transition: isDragging ? "transform 0.1s" : "transform 0.1s",
       }}
+      onMouseDown={handleMouseDown}
+      onClick={handleClick}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
-      <motion.div 
-        className="relative w-full h-full cursor-grab active:cursor-grabbing pointer-events-auto"
-        onMouseDown={handleMouseDown}
-        onMouseEnter={handleHover}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={(e) => {
-          e.stopPropagation();
-          if (!hasMoved && !isDragging) {
-            const targetX = e.clientX - 64; // Center sprite
-            const targetY = e.clientY - 64;
-            const distance = Math.sqrt(
-              Math.pow(targetX - position.x, 2) + Math.pow(targetY - position.y, 2)
-            );
-
-            // Only animate if distance > 50px
-            if (distance > 50) {
-              animateToPosition(targetX, targetY);
-            }
-            handleClick();
-          }
-        }}
+      <motion.div
+        className="relative w-full h-full"
+        whileHover={{ scale: isDragging ? 1 : 1.05 }}
       >
         {/* Angry glow effect */}
         {state === "angry" && (
           <motion.div
             className="absolute inset-0 rounded-full"
             style={{
-              background: "radial-gradient(circle, rgba(239, 68, 68, 0.3) 0%, transparent 70%)",
+              background: "radial-gradient(circle, rgba(239, 68, 68, 0.4) 0%, transparent 70%)",
+              filter: "blur(10px)",
+            }}
+            animate={{
+              scale: [1, 1.3, 1],
+              opacity: [0.4, 0.8, 0.4],
+            }}
+            transition={{
+              duration: 0.3,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+        )}
+
+        {/* Eating glow */}
+        {state === "eating" && (
+          <motion.div
+            className="absolute inset-0 rounded-full"
+            style={{
+              background: "radial-gradient(circle, rgba(203, 166, 247, 0.3) 0%, transparent 70%)",
               filter: "blur(8px)",
             }}
             animate={{
-              scale: [1, 1.2, 1],
+              scale: [1, 1.15, 1],
               opacity: [0.3, 0.6, 0.3],
             }}
             transition={{
@@ -225,10 +329,50 @@ export function AlbaCompanion() {
             }}
           />
         )}
+
+        {/* Purring glow */}
+        {state === "purring" && (
+          <motion.div
+            className="absolute inset-0 rounded-full"
+            style={{
+              background: "radial-gradient(circle, rgba(37, 244, 244, 0.2) 0%, transparent 70%)",
+              filter: "blur(8px)",
+            }}
+            animate={{
+              scale: [1, 1.1, 1],
+              opacity: [0.2, 0.4, 0.2],
+            }}
+            transition={{
+              duration: 0.8,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+        )}
+
+        {/* Curious glow */}
+        {state === "curious" && (
+          <motion.div
+            className="absolute inset-0 rounded-full"
+            style={{
+              background: "radial-gradient(circle, rgba(203, 166, 247, 0.15) 0%, transparent 70%)",
+              filter: "blur(6px)",
+            }}
+            animate={{
+              scale: [1, 1.05, 1],
+              opacity: [0.15, 0.25, 0.15],
+            }}
+            transition={{
+              duration: 1,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+        )}
+
         <AlbaBubble />
         <AlbaSprite />
       </motion.div>
     </div>
   );
 }
-

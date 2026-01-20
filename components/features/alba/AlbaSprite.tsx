@@ -22,6 +22,8 @@ export function AlbaSprite() {
         return "/sprites/alba/alba-curious.png";
       case "angry":
         return "/sprites/alba/alba-angry.png";
+      case "eating":
+        return "/sprites/alba/alba-sitting.png"; // Use sitting sprite with eating animation
       default:
         return "/sprites/alba/alba-sitting.png";
     }
@@ -54,8 +56,8 @@ export function AlbaSprite() {
         return (
           <motion.div
             className="absolute -top-6 left-1/2 -translate-x-1/2 text-red-400 font-bold text-2xl"
-            animate={{ 
-              scale: [1, 1.3, 1], 
+            animate={{
+              scale: [1, 1.3, 1],
               rotate: [0, 15, -15, 0],
               opacity: [1, 0.8, 1]
             }}
@@ -65,6 +67,19 @@ export function AlbaSprite() {
             }}
           >
             !
+          </motion.div>
+        );
+      case "eating":
+        return (
+          <motion.div
+            className="absolute -top-6 left-1/2 -translate-x-1/2 text-[#cba6f7] font-bold text-sm"
+            animate={{
+              y: [0, -3, 0],
+              scale: [1, 1.05, 1]
+            }}
+            transition={{ duration: 1, repeat: Infinity, ease: "easeInOut" }}
+          >
+            nom nom
           </motion.div>
         );
       default:
@@ -84,20 +99,26 @@ export function AlbaSprite() {
           state === "sleeping"
             ? { y: [0, -2, 0] }
             : state === "purring"
-            ? { scale: [1, 1.05, 1], rotate: [-1, 1, -1] }
+            ? { scale: [1, 1.08, 1, 1.08, 1], rotate: [-2, 2, -2, 2, -2], y: [0, -3, 0, -3, 0] }
             : state === "curious"
             ? { rotate: [-2, 2, -2] }
             : state === "angry"
-            ? { 
-                scale: [1, 1.15, 1], 
+            ? {
+                scale: [1, 1.15, 1],
                 x: [-4, 4, -4, 4, -4],
                 rotate: [-3, 3, -3, 3, -3]
+              }
+            : state === "eating"
+            ? {
+                y: [0, 6, 0], // Slower, gentler head bob
+                rotate: [-1, 1, -1],
+                scale: [1, 0.97, 1]
               }
             : {}
         }
         transition={{
-          duration: state === "sleeping" ? 2 : state === "purring" ? 0.3 : state === "angry" ? 0.15 : 1,
-          repeat: state === "sleeping" || state === "purring" || state === "curious" || state === "angry" ? Infinity : 0,
+          duration: state === "sleeping" ? 2 : state === "purring" ? 0.6 : state === "angry" ? 0.15 : state === "eating" ? 1.2 : 1,
+          repeat: state === "sleeping" || state === "purring" || state === "curious" || state === "angry" || state === "eating" ? Infinity : 0,
           ease: state === "angry" ? "linear" : "easeInOut",
         }}
       >

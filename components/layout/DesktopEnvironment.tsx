@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { DesktopHeader } from "./DesktopHeader";
 import { DesktopIcons } from "./DesktopIcons";
@@ -16,6 +16,8 @@ interface DesktopEnvironmentProps {
 export function DesktopEnvironment({ children }: DesktopEnvironmentProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const [isAlbaEating, setIsAlbaEating] = useState(false);
+  const [foodBowlPosition, setFoodBowlPosition] = useState<{ x: number; y: number } | null>(null);
 
   return (
     <div className="relative z-10 flex h-full w-full flex-col justify-between">
@@ -57,10 +59,18 @@ export function DesktopEnvironment({ children }: DesktopEnvironmentProps) {
       </main>
 
       {/* Taskbar */}
-      <Taskbar currentPath={pathname} onNavigate={router.push} />
+      <Taskbar
+        currentPath={pathname}
+        onNavigate={router.push}
+        onFeedAlba={(pos) => setFoodBowlPosition(pos)}
+        isAlbaEating={isAlbaEating}
+      />
 
       {/* Alba Companion */}
-      <AlbaCompanion />
+      <AlbaCompanion
+        onEatingChange={setIsAlbaEating}
+        foodBowlPosition={foodBowlPosition}
+      />
     </div>
   );
 }

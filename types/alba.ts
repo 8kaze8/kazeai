@@ -1,4 +1,4 @@
-export type AlbaState = "sleeping" | "awake" | "walking" | "purring" | "curious" | "angry";
+export type AlbaState = "sleeping" | "awake" | "walking" | "purring" | "curious" | "angry" | "eating";
 
 export interface AlbaStoreState {
   state: AlbaState;

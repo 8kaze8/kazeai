@@ -200,7 +200,7 @@ export function useAlbaInteraction() {
           translateY: [startY, randomY],
           duration: duration,
           easing: "easeInOutQuad",
-          update: (anim) => {
+          update: (anim: { progress: number }) => {
             const progress = anim.progress / 100;
             const currentX = startX + (randomX - startX) * progress;
             const currentY = startY + (randomY - startY) * progress;

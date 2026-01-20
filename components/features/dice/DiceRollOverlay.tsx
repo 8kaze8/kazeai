@@ -34,23 +34,27 @@ export function DiceRollOverlay() {
         duration: 500,
         complete: () => {
           // Red flash
-          animate(overlayRef.current, {
-            backgroundColor: [
-              "rgba(26, 13, 13, 1)",
-              "rgba(239, 68, 68, 0.3)",
-              "rgba(26, 13, 13, 1)",
-            ],
-            duration: 300,
-            complete: () => {
-              // Error message scale
-              animate(errorMessageRef.current, {
-                scale: [0, 1.2, 1],
-                opacity: [0, 1],
-                duration: 400,
-                easing: "easeOutElastic(1, .8)",
-              });
-            },
-          });
+          if (overlayRef.current) {
+            animate(overlayRef.current, {
+              backgroundColor: [
+                "rgba(26, 13, 13, 1)",
+                "rgba(239, 68, 68, 0.3)",
+                "rgba(26, 13, 13, 1)",
+              ],
+              duration: 300,
+              complete: () => {
+                // Error message scale
+                if (errorMessageRef.current) {
+                  animate(errorMessageRef.current, {
+                    scale: [0, 1.2, 1],
+                    opacity: [0, 1],
+                    duration: 400,
+                    easing: "easeOutElastic(1, .8)",
+                  });
+                }
+              },
+            });
+          }
         },
       });
 
@@ -80,24 +84,28 @@ export function DiceRollOverlay() {
           easing: "easeOutElastic(1, .8)",
           complete: () => {
             // Success message
-            animate(successMessageRef.current, {
-              scale: [0, 1.2, 1],
-              opacity: [0, 1],
-              duration: 600,
-              easing: "easeOutElastic(1, .8)",
-              complete: () => {
-                // Glow efekti
-                animate(successMessageRef.current, {
-                  textShadow: [
-                    "0 0 0px rgba(37,244,244,0)",
-                    "0 0 30px rgba(37,244,244,1)",
-                    "0 0 60px rgba(37,244,244,0.8)",
-                  ],
-                  duration: 1000,
-                  easing: "easeInOut",
-                });
-              },
-            });
+            if (successMessageRef.current) {
+              animate(successMessageRef.current, {
+                scale: [0, 1.2, 1],
+                opacity: [0, 1],
+                duration: 600,
+                easing: "easeOutElastic(1, .8)",
+                complete: () => {
+                  // Glow efekti
+                  if (successMessageRef.current) {
+                    animate(successMessageRef.current, {
+                      textShadow: [
+                        "0 0 0px rgba(37,244,244,0)",
+                        "0 0 30px rgba(37,244,244,1)",
+                        "0 0 60px rgba(37,244,244,0.8)",
+                      ],
+                      duration: 1000,
+                      easing: "easeInOut",
+                    });
+                  }
+                },
+              });
+            }
           },
         });
       }
