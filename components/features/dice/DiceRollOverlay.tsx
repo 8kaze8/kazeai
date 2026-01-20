@@ -107,14 +107,14 @@ export function DiceRollOverlay() {
           {/* Critical Success Effects */}
           {transitionType === "criticalSuccess" && phase === "result" && (
             <>
-              <Confetti duration={2000} colors={["#FFD700", "#FFA500", "#FFEC8B", "#25f4f4", "#a6e3a1"]} />
-              <Sparkles count={40} duration={1800} />
+              <Confetti duration={3000} colors={["#FFD700", "#FFA500", "#FFEC8B", "#25f4f4", "#a6e3a1"]} />
+              <Sparkles count={40} duration={2500} />
             </>
           )}
 
           {/* Critical Fail Effects */}
           {transitionType === "criticalFail" && phase === "result" && (
-            <ScreenCrack duration={1500} />
+            <ScreenCrack duration={2000} />
           )}
 
           {/* Backdrop */}
