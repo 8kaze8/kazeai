@@ -115,14 +115,10 @@ export default function Contact() {
         {/* Window Header */}
         <div className="flex items-center justify-between px-3 py-2 bg-gradient-to-r from-[#162a2a] to-[#102323] border-b border-primary/20">
           <div className="flex items-center gap-2">
-            <Icon name="terminal" className="text-primary" size={16} />
+            <Icon name="wifi_tethering" className="text-primary" size={16} />
             <h3 className="text-white text-sm font-bold tracking-[0.1em]">
-              {/* SECURE_COMMS_LINK_V2.0 */}
+              COMMS_LINK [KAZE_OS]
             </h3>
-            <div className="ml-3 flex items-center gap-1.5 px-2 py-0.5 bg-primary/10 rounded text-[9px] text-primary font-mono border border-primary/20">
-              <span className="w-1 h-1 rounded-full bg-primary animate-pulse" />
-              ONLINE
-            </div>
           </div>
           <div className="flex gap-2">
             <button className="text-primary/70 hover:text-primary transition-colors">
@@ -143,9 +139,9 @@ export default function Contact() {
         {/* Window Body */}
         <div className="flex flex-1 overflow-hidden flex-col md:flex-row min-h-0 max-h-full">
           {/* Left Sidebar: Channel Select */}
-          <div className="w-full md:w-64 bg-surface-dark/50 border-r border-primary/10 flex flex-col p-3 md:p-4 gap-3 overflow-y-auto flex-shrink-0 min-h-0">
+          <div className="w-full md:w-64 bg-surface-dark/50 border-r border-primary/10 flex flex-col p-3 md:p-4 gap-3 md:gap-4 overflow-y-auto flex-shrink-0 min-h-0">
             <div>
-              <p className="text-[10px] text-accent-text tracking-widest mb-3 font-mono">
+              <p className="text-[10px] font-bold text-gray-500 mb-2 tracking-widest">
                 CHANNEL_SELECT
               </p>
               <div className="flex flex-col gap-2">
@@ -929,27 +925,12 @@ export default function Contact() {
         </div>
 
         {/* Status Bar Footer */}
-        <div className="bg-[#102222] border-t border-primary/10 px-4 py-1 flex justify-between items-center text-[10px] text-primary/60 font-mono select-none flex-shrink-0">
+        <div className="bg-[#102222] border-t border-primary/10 px-4 py-1 flex justify-between items-center text-[10px] text-primary/60 font-mono select-none">
           <div className="flex gap-4">
-            <span className="flex items-center gap-1.5">
-              <span className="size-1 rounded-full bg-emerald-500" />
-              SYSTEM_READY
-            </span>
-            <span className="w-px h-3 bg-border-color" />
-            <span className="hidden md:inline">LATENCY: 24ms</span>
-            <span className="w-px h-3 bg-border-color hidden md:inline" />
-            <span className="hidden md:inline">UPTIME: 42:10:05</span>
+            <span>MEM: 64TB FREE</span>
+            <span>NET: CONNECTED (SECURE)</span>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="animate-pulse text-primary">_</span>
-            <span>
-              {channel === "social"
-                ? "DATA_STREAM_ACTIVE"
-                : channel === "scheduling"
-                ? "AWAITING_INPUT..."
-                : "AWAITING_INPUT..."}
-            </span>
-          </div>
+          <div>KAZE_OS v2.4.0</div>
         </div>
       </WindowContainer>
     </div>

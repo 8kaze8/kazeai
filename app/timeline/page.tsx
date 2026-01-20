@@ -127,16 +127,13 @@ export default function Timeline() {
 
   return (
     <div className="flex items-center justify-center h-full w-full p-3 md:p-4">
-      <WindowContainer className="relative flex flex-col w-full max-w-5xl max-h-[calc(100vh-12rem)] md:max-h-[75vh] bg-[#102323]/95 backdrop-blur-md border border-primary/30 rounded-xl shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden">
-        {/* Scanline Overlay */}
-        <div className="absolute inset-0 pointer-events-none z-50 opacity-10 scanline" />
-
+      <WindowContainer className="relative flex flex-col w-full max-w-4xl max-h-[calc(100vh-12rem)] md:max-h-[75vh] bg-[#102323]/95 backdrop-blur-md border border-primary/30 rounded-xl shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden">
         {/* Window Header */}
         <div className="flex items-center justify-between px-3 py-2 bg-gradient-to-r from-[#162a2a] to-[#102323] border-b border-primary/20 shrink-0">
           <div className="flex items-center gap-2">
             <Icon name="history" className="text-primary" size={16} />
             <h3 className="text-white text-sm font-bold tracking-[0.1em]">
-              {/* TIMELINE_ARCHIVES_V2.0 */}
+              QUEST_LOG [KAZE_OS]
             </h3>
           </div>
           <div className="flex gap-2">
@@ -158,13 +155,13 @@ export default function Timeline() {
         {/* Window Body */}
         <div className="flex flex-1 overflow-hidden flex-col md:flex-row min-h-0 max-h-full">
           {/* Left Sidebar: Timeline Navigation */}
-          <aside className="w-full md:w-64 border-r border-border-color bg-surface-dark/50 flex flex-col overflow-y-auto flex-shrink-0 min-h-0">
-            <div className="p-3 md:p-4 pb-2">
-              <h3 className="text-white/50 text-[10px] font-bold uppercase tracking-widest mb-3">
+          <aside className="w-full md:w-64 border-r border-primary/10 bg-surface-dark/50 flex flex-col overflow-y-auto flex-shrink-0 min-h-0 p-3 md:p-4 gap-3 md:gap-4">
+            <div>
+              <p className="text-[10px] font-bold text-gray-500 mb-2 tracking-widest">
                 SELECT DATA POINT
-              </h3>
+              </p>
             </div>
-            <div className="flex flex-col px-2 md:px-4 pb-6">
+            <div className="flex flex-col gap-1">
               {experiences.map((exp, index) => {
                 const isSelected = selectedExperience.id === exp.id;
                 const isLast = index === experiences.length - 1;
@@ -402,15 +399,12 @@ export default function Timeline() {
         </div>
 
         {/* Status Bar Footer */}
-        <div className="h-8 bg-[#102222] border-t border-primary/10 px-4 flex items-center justify-between text-[10px] text-primary/60 font-mono select-none shrink-0">
+        <div className="bg-[#102222] border-t border-primary/10 px-4 py-1 flex justify-between items-center text-[10px] text-primary/60 font-mono select-none">
           <div className="flex gap-4">
-            <span>Index: 82%</span>
-            <span>Cache: 12MB</span>
-            <span>Net: 1Gbps</span>
+            <span>MEM: 64TB FREE</span>
+            <span>NET: CONNECTED (SECURE)</span>
           </div>
-          <div>
-            Logged in as: <span className="text-primary">Kadir_Admin</span>
-          </div>
+          <div>KAZE_OS v2.4.0</div>
         </div>
       </WindowContainer>
     </div>

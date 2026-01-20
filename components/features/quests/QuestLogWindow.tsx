@@ -133,25 +133,25 @@ export function QuestLogWindow() {
   }, []);
 
   return (
-    <WindowContainer className="relative w-[95%] max-w-5xl max-h-[calc(100vh-12rem)] md:max-h-[75vh] flex flex-col bg-surface-darker rounded-xl border border-[#224949] shadow-2xl overflow-hidden z-10">
+    <WindowContainer className="relative w-full max-w-4xl max-h-[calc(100vh-12rem)] md:max-h-[75vh] flex flex-col bg-[#102323]/95 backdrop-blur-md border border-primary/30 rounded-xl shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden z-10">
       {/* Window Header */}
-      <div className="h-10 bg-surface-dark flex items-center justify-between px-3 border-b border-[#224949] select-none">
+      <div className="flex items-center justify-between px-3 py-2 bg-gradient-to-r from-[#162a2a] to-[#102323] border-b border-primary/20">
         <div className="flex items-center gap-2">
           <Icon name="menu_book" className="text-primary" size={16} />
-          <span className="text-white font-bold tracking-wider text-xs uppercase">
-            Quest Log // Kaze_Dev_V2.0
-          </span>
+          <h3 className="text-white text-sm font-bold tracking-[0.1em]">
+            QUEST_LOG [KAZE_OS]
+          </h3>
         </div>
-        <div className="flex items-center gap-2">
-          <button className="w-8 h-8 flex items-center justify-center rounded hover:bg-white/10 text-gray-400 hover:text-white transition-colors">
+        <div className="flex gap-2">
+          <button className="text-primary/70 hover:text-primary transition-colors">
             <Icon name="minimize" size={18} />
           </button>
-          <button className="w-8 h-8 flex items-center justify-center rounded hover:bg-white/10 text-gray-400 hover:text-white transition-colors">
-            <Icon name="check_box_outline_blank" size={18} />
+          <button className="text-primary/70 hover:text-primary transition-colors">
+            <Icon name="crop_square" size={18} />
           </button>
           <button
             onClick={() => router.push("/")}
-            className="w-8 h-8 flex items-center justify-center rounded hover:bg-red-500/20 text-gray-400 hover:text-red-400 transition-colors"
+            className="text-red-400 hover:text-red-300 transition-colors"
           >
             <Icon name="close" size={18} />
           </button>
@@ -399,10 +399,13 @@ export function QuestLogWindow() {
         </div>
       </div>
 
-      {/* Window Footer */}
-      <div className="h-8 bg-[#0d1818] border-t border-[#224949] flex items-center justify-between px-4 text-[10px] text-gray-500 font-mono">
-        <span>RAM: 32GB // CPU: ONLINE</span>
-        <span>SYSTEM STATUS: STABLE</span>
+      {/* Status Bar Footer */}
+      <div className="bg-[#102222] border-t border-primary/10 px-4 py-1 flex justify-between items-center text-[10px] text-primary/60 font-mono select-none">
+        <div className="flex gap-4">
+          <span>MEM: 64TB FREE</span>
+          <span>NET: CONNECTED (SECURE)</span>
+        </div>
+        <div>KAZE_OS v2.4.0</div>
       </div>
     </WindowContainer>
   );

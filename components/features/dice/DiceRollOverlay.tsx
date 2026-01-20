@@ -38,7 +38,7 @@ export function DiceRollOverlay() {
         } else if (transitionType === "criticalSuccess") {
           setAlbaState("purring");
         }
-      }, 500);
+      }, 300);
 
       // Navigate or redirect after showing result
       const navigateTimer = setTimeout(() => {
@@ -56,9 +56,9 @@ export function DiceRollOverlay() {
           // Reset Alba state after a delay
           setTimeout(() => {
             setAlbaState("awake");
-          }, 500);
-        }, 200);
-      }, transitionType === "criticalSuccess" ? 2500 : transitionType === "criticalFail" ? 2200 : 1400);
+          }, 300);
+        }, 150);
+      }, transitionType === "criticalSuccess" ? 1800 : transitionType === "criticalFail" ? 1500 : 1000);
 
       return () => {
         clearTimeout(resultTimer);
@@ -107,14 +107,14 @@ export function DiceRollOverlay() {
           {/* Critical Success Effects */}
           {transitionType === "criticalSuccess" && phase === "result" && (
             <>
-              <Confetti duration={3000} colors={["#FFD700", "#FFA500", "#FFEC8B", "#25f4f4", "#a6e3a1"]} />
-              <Sparkles count={40} duration={2500} />
+              <Confetti duration={2000} colors={["#FFD700", "#FFA500", "#FFEC8B", "#25f4f4", "#a6e3a1"]} />
+              <Sparkles count={40} duration={1800} />
             </>
           )}
 
           {/* Critical Fail Effects */}
           {transitionType === "criticalFail" && phase === "result" && (
-            <ScreenCrack duration={2000} />
+            <ScreenCrack duration={1500} />
           )}
 
           {/* Backdrop */}
