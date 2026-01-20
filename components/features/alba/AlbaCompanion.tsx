@@ -12,7 +12,7 @@ interface AlbaCompanionProps {
 }
 
 export function AlbaCompanion({ onEatingChange, foodBowlPosition }: AlbaCompanionProps) {
-  const { position, state, setPosition, setState, showMessage } = useAlbaStore();
+  const { position, state, setPosition, setState, setDirection, showMessage } = useAlbaStore();
   const [isDragging, setIsDragging] = useState(false);
   const [isEating, setIsEating] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -63,12 +63,15 @@ export function AlbaCompanion({ onEatingChange, foodBowlPosition }: AlbaCompanio
     const currentPos = useAlbaStore.getState().position;
 
     // Random direction - go far! 200-400px movement
-    const direction = Math.random() > 0.5 ? 1 : -1;
-    const offsetX = direction * (200 + Math.random() * 200);
+    const directionMultiplier = Math.random() > 0.5 ? 1 : -1;
+    const offsetX = directionMultiplier * (200 + Math.random() * 200);
     const offsetY = (Math.random() - 0.5) * 300;
 
     const targetX = Math.max(0, Math.min(window.innerWidth - spriteSize, currentPos.x + offsetX));
     const targetY = Math.max(0, Math.min(window.innerHeight - taskbarHeight - spriteSize, currentPos.y + offsetY));
+
+    // Set walking direction based on target
+    setDirection(targetX > currentPos.x ? "right" : "left");
 
     // Animate walk - slower for longer distance
     const startX = currentPos.x;
@@ -165,6 +168,10 @@ export function AlbaCompanion({ onEatingChange, foodBowlPosition }: AlbaCompanio
       if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
         dragDataRef.current.wasDragged = true;
         if (state !== "walking") setState("walking");
+        // Set direction based on drag movement
+        if (deltaX !== 0) {
+          setDirection(deltaX > 0 ? "right" : "left");
+        }
       }
 
       // Calculate new position with bounds
@@ -281,33 +288,58 @@ export function AlbaCompanion({ onEatingChange, foodBowlPosition }: AlbaCompanio
       return;
     }
 
-    // First click = curious, show message
+    // Show message based on click count
     if (newClickCount === 1) {
-      setState("curious");
       showMessage();
     } else if (newClickCount === 2) {
-      // Second click = still curious but different message
       showMessage("Mrrow? 🐱");
     }
 
-    // Move AWAY from click - much more noticeable distance
-    const moveDirection = Math.random() > 0.5 ? 1 : -1;
-    const offsetX = moveDirection * (80 + Math.random() * 60); // 80-140px
-    const offsetY = (Math.random() - 0.5) * 40; // -20 to +20px
+    // Move AWAY from click - doubled distance for more noticeable walk
+    const moveDirectionMultiplier = Math.random() > 0.5 ? 1 : -1;
+    const offsetX = moveDirectionMultiplier * (160 + Math.random() * 120); // 160-280px (doubled)
+    const offsetY = (Math.random() - 0.5) * 80; // -40 to +40px (doubled)
 
     const spriteSize = 128;
     const taskbarHeight = 56;
     const targetX = Math.max(0, Math.min(window.innerWidth - spriteSize, position.x + offsetX));
     const targetY = Math.max(0, Math.min(window.innerHeight - taskbarHeight - spriteSize, position.y + offsetY));
 
-    animateToPosition(targetX, targetY, 400); // Slower, more visible movement
+    // Set direction based on movement and start walking
+    setDirection(targetX > position.x ? "right" : "left");
+    setState("walking");
 
-    // Return to awake after curious
-    setTimeout(() => {
-      if (useAlbaStore.getState().state === "curious") {
-        setState("awake");
+    // Animate walk away from click - longer duration for visible walking
+    const startX = position.x;
+    const startY = position.y;
+    const distance = Math.sqrt(Math.pow(targetX - startX, 2) + Math.pow(targetY - startY, 2));
+    const duration = Math.max(800, Math.min(distance * 4, 1500)); // Slower: 800-1500ms based on distance
+    const startTime = Date.now();
+
+    const animateWalkAway = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+
+      setPosition({
+        x: startX + (targetX - startX) * eased,
+        y: startY + (targetY - startY) * eased,
+      });
+
+      if (progress < 1) {
+        requestAnimationFrame(animateWalkAway);
+      } else {
+        // Done walking, become curious then awake
+        setState("curious");
+        setTimeout(() => {
+          if (useAlbaStore.getState().state === "curious") {
+            setState("awake");
+          }
+        }, 1000);
       }
-    }, 1500);
+    };
+
+    requestAnimationFrame(animateWalkAway);
   };
 
   // Hover = curious
@@ -335,6 +367,9 @@ export function AlbaCompanion({ onEatingChange, foodBowlPosition }: AlbaCompanio
       // Calculate target position (above the food bowl)
       const targetX = Math.max(0, Math.min(window.innerWidth - 128, foodBowlPosition.x - 64));
       const targetY = Math.max(0, Math.min(window.innerHeight - 56 - 128, foodBowlPosition.y - 140));
+
+      // Set direction based on food bowl position
+      setDirection(targetX > position.x ? "right" : "left");
 
       // Animate walking to food bowl
       const startX = position.x;

@@ -1,11 +1,38 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useAlbaStore } from "@/store/albaStore";
 import Image from "next/image";
 
+// Sprite sheet config for walking animation
+const WALKING_SPRITE = {
+  src: "/sprites/alba/alba-walking-sheet.png",
+  cols: 4,
+  rows: 4,
+  totalFrames: 16,
+  frameWidth: 128,
+  frameHeight: 128,
+  fps: 5, // Slower walking animation for clearer visibility
+};
+
 export function AlbaSprite() {
-  const { state } = useAlbaStore();
+  const { state, direction } = useAlbaStore();
+  const [walkFrame, setWalkFrame] = useState(0);
+
+  // Animate walking sprite sheet
+  useEffect(() => {
+    if (state !== "walking") {
+      setWalkFrame(0);
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setWalkFrame((prev) => (prev + 1) % WALKING_SPRITE.totalFrames);
+    }, 1000 / WALKING_SPRITE.fps);
+
+    return () => clearInterval(interval);
+  }, [state]);
 
   // Map state to sprite file
   const getSpriteFile = () => {
@@ -13,7 +40,7 @@ export function AlbaSprite() {
       case "sleeping":
         return "/sprites/alba/alba-sleeping.png";
       case "walking":
-        return "/sprites/alba/alba-walking.png";
+        return null; // Use sprite sheet instead
       case "awake":
         return "/sprites/alba/alba-sitting.png";
       case "purring":
@@ -27,6 +54,16 @@ export function AlbaSprite() {
       default:
         return "/sprites/alba/alba-sitting.png";
     }
+  };
+
+  // Calculate sprite sheet position for walking
+  const getWalkingSpritePosition = () => {
+    const col = walkFrame % WALKING_SPRITE.cols;
+    const row = Math.floor(walkFrame / WALKING_SPRITE.cols);
+    return {
+      x: col * WALKING_SPRITE.frameWidth,
+      y: row * WALKING_SPRITE.frameHeight,
+    };
   };
 
   // Get symbol for each state
@@ -87,11 +124,14 @@ export function AlbaSprite() {
     }
   };
 
+  const spriteFile = getSpriteFile();
+  const walkPos = getWalkingSpritePosition();
+
   return (
     <div className="relative w-32 h-32">
       {/* Symbol above head */}
       {getSymbol()}
-      
+
       {/* Sprite image */}
       <motion.div
         className="relative w-32 h-32"
@@ -122,15 +162,38 @@ export function AlbaSprite() {
           ease: state === "angry" ? "linear" : "easeInOut",
         }}
       >
-        <Image
-          src={getSpriteFile()}
-          alt={`Alba ${state}`}
-          width={128}
-          height={128}
-          className="w-full h-full object-contain"
-          style={{ imageRendering: "pixelated" }}
-          unoptimized
-        />
+        {state === "walking" ? (
+          // Walking animation using sprite sheet
+          <div
+            className="w-32 h-32 overflow-hidden"
+            style={{
+              imageRendering: "pixelated",
+              transform: direction === "left" ? "scaleX(-1)" : "scaleX(1)",
+            }}
+          >
+            <div
+              style={{
+                width: WALKING_SPRITE.frameWidth * WALKING_SPRITE.cols,
+                height: WALKING_SPRITE.frameHeight * WALKING_SPRITE.rows,
+                backgroundImage: `url(${WALKING_SPRITE.src})`,
+                backgroundSize: "100% 100%",
+                transform: `translate(-${walkPos.x}px, -${walkPos.y}px)`,
+                imageRendering: "pixelated",
+              }}
+            />
+          </div>
+        ) : (
+          // Static sprite for other states
+          <Image
+            src={spriteFile || "/sprites/alba/alba-sitting.png"}
+            alt={`Alba ${state}`}
+            width={128}
+            height={128}
+            className="w-full h-full object-contain"
+            style={{ imageRendering: "pixelated" }}
+            unoptimized
+          />
+        )}
       </motion.div>
     </div>
   );
