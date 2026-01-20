@@ -14,14 +14,22 @@ interface TaskbarProps {
 }
 
 export function Taskbar({ currentPath, onNavigate, onFeedAlba, isAlbaEating = false }: TaskbarProps) {
-  const { state, position, showMessage } = useAlbaStore();
+  const { state, position, showMessage, setState } = useAlbaStore();
   const [searchQuery, setSearchQuery] = useState("");
   const foodBowlRef = useRef<HTMLDivElement>(null);
 
   const handleAlbaClick = () => {
-    const randomMessage =
-      ALBA_MESSAGES[Math.floor(Math.random() * ALBA_MESSAGES.length)];
-    showMessage(randomMessage);
+    // Set purring state and show message
+    setState("purring");
+    showMessage("Prrr... 💜");
+
+    // Return to awake after 3 seconds
+    setTimeout(() => {
+      const currentState = useAlbaStore.getState().state;
+      if (currentState === "purring") {
+        setState("awake");
+      }
+    }, 3000);
   };
 
   return (
@@ -50,6 +58,19 @@ export function Taskbar({ currentPath, onNavigate, onFeedAlba, isAlbaEating = fa
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+
+        {/* Food Bowl - Left side */}
+        <div ref={foodBowlRef} className="h-full">
+          <DockFoodBowl
+            isFilled={isAlbaEating}
+            onFoodReady={() => {
+              if (foodBowlRef.current) {
+                const rect = foodBowlRef.current.getBoundingClientRect();
+                onFeedAlba?.({ x: rect.left + rect.width / 2, y: rect.top });
+              }
+            }}
           />
         </div>
       </div>
@@ -84,37 +105,18 @@ export function Taskbar({ currentPath, onNavigate, onFeedAlba, isAlbaEating = fa
 
         {/* Alba Companion */}
         <div
-          className="h-full flex items-center justify-center px-4 hover:bg-white/5 border-b-2 border-transparent hover:border-yellow-200/50 relative group cursor-pointer transition-colors ml-2"
+          className="h-full flex items-center justify-center px-4 hover:bg-white/5 border-b-2 border-transparent hover:border-[#cba6f7]/50 relative group cursor-pointer transition-colors ml-2"
           onClick={handleAlbaClick}
         >
-          <div className="w-12 h-12 -mb-1 rounded bg-center bg-cover pixelated opacity-90 group-hover:opacity-100 transition-all duration-500 origin-bottom group-hover:scale-110 group-hover:-translate-y-1">
-            {/* Placeholder for Alba sprite - will be replaced with actual image */}
-            <div className="w-full h-full bg-gradient-to-br from-yellow-200 to-orange-300 rounded flex items-center justify-center">
-              <span className="text-2xl">🐱</span>
+          <div className="w-10 h-10 rounded bg-center bg-cover pixelated opacity-90 group-hover:opacity-100 transition-all duration-500 origin-bottom group-hover:scale-110">
+            {/* Placeholder for Alba sprite */}
+            <div className="w-full h-full bg-gradient-to-br from-[#cba6f7] to-[#9366cc] rounded flex items-center justify-center">
+              <span className="text-xl">🐱</span>
             </div>
           </div>
-          <div className="absolute bottom-full mb-4 left-1/2 -translate-x-1/2 hidden group-hover:flex flex-col items-center w-56 bg-[#152a2a] border border-yellow-200/30 text-white text-xs p-3 rounded-lg shadow-[0_0_20px_rgba(0,0,0,0.5)] z-50 animate-in fade-in slide-in-from-bottom-2 duration-300">
-            <p className="font-bold text-yellow-200 mb-1 flex items-center gap-1">
-              <Icon name="pets" size={14} className="text-yellow-200" /> Alba
-            </p>
-            <p className="text-white/70 italic text-center">
-              Stretching... Time to automate?
-            </p>
-            <div className="w-0 h-0 border-l-[6px] border-l-transparent border-t-[6px] border-t-[#152a2a] border-r-[6px] border-r-transparent absolute -bottom-[6px]"></div>
+          <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 hidden group-hover:block w-24 bg-gray-900 border border-[#cba6f7]/30 text-white text-xs p-2 rounded shadow-xl text-center z-50">
+            Pet Alba
           </div>
-        </div>
-
-        {/* Food Bowl */}
-        <div ref={foodBowlRef} className="h-full">
-          <DockFoodBowl
-            isFilled={isAlbaEating}
-            onFoodReady={() => {
-              if (foodBowlRef.current) {
-                const rect = foodBowlRef.current.getBoundingClientRect();
-                onFeedAlba?.({ x: rect.left + rect.width / 2, y: rect.top });
-              }
-            }}
-          />
         </div>
       </div>
 

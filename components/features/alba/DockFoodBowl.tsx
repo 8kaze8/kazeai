@@ -17,12 +17,12 @@ export function DockFoodBowl({ onFoodReady, isFilled }: DockFoodBowlProps) {
 
   return (
     <div
-      className="h-full flex items-center px-3 hover:bg-white/5 border-b-2 border-transparent hover:border-primary/50 relative group cursor-pointer transition-colors"
+      className="h-full flex items-center px-2 hover:bg-white/5 border-b-2 border-transparent hover:border-primary/50 relative group cursor-pointer transition-colors"
       onClick={handleClick}
       title={isFilled ? "Alba is eating..." : "Click to fill with food"}
     >
       <motion.div
-        className="relative w-8 h-8"
+        className="relative w-10 h-10"
         whileHover={{ scale: isFilled ? 1 : 1.1 }}
         whileTap={{ scale: isFilled ? 1 : 0.95 }}
       >
