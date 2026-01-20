@@ -16,9 +16,21 @@ const WALKING_SPRITE = {
   fps: 5, // Slower walking animation for clearer visibility
 };
 
+// Sprite sheet config for eating animation
+const EATING_SPRITE = {
+  src: "/sprites/alba/alba-eating-sheet.png",
+  cols: 3,
+  rows: 3,
+  totalFrames: 9,
+  frameWidth: 176,
+  frameHeight: 140,
+  fps: 4, // Slower eating animation
+};
+
 export function AlbaSprite() {
   const { state, direction } = useAlbaStore();
   const [walkFrame, setWalkFrame] = useState(0);
+  const [eatFrame, setEatFrame] = useState(0);
 
   // Animate walking sprite sheet
   useEffect(() => {
@@ -30,6 +42,20 @@ export function AlbaSprite() {
     const interval = setInterval(() => {
       setWalkFrame((prev) => (prev + 1) % WALKING_SPRITE.totalFrames);
     }, 1000 / WALKING_SPRITE.fps);
+
+    return () => clearInterval(interval);
+  }, [state]);
+
+  // Animate eating sprite sheet
+  useEffect(() => {
+    if (state !== "eating") {
+      setEatFrame(0);
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setEatFrame((prev) => (prev + 1) % EATING_SPRITE.totalFrames);
+    }, 1000 / EATING_SPRITE.fps);
 
     return () => clearInterval(interval);
   }, [state]);
@@ -50,7 +76,7 @@ export function AlbaSprite() {
       case "angry":
         return "/sprites/alba/alba-angry.png";
       case "eating":
-        return "/sprites/alba/alba-sitting.png"; // Use sitting sprite with eating animation
+        return null; // Use sprite sheet instead
       default:
         return "/sprites/alba/alba-sitting.png";
     }
@@ -63,6 +89,16 @@ export function AlbaSprite() {
     return {
       x: col * WALKING_SPRITE.frameWidth,
       y: row * WALKING_SPRITE.frameHeight,
+    };
+  };
+
+  // Calculate sprite sheet position for eating
+  const getEatingSpritePosition = () => {
+    const col = eatFrame % EATING_SPRITE.cols;
+    const row = Math.floor(eatFrame / EATING_SPRITE.cols);
+    return {
+      x: col * EATING_SPRITE.frameWidth,
+      y: row * EATING_SPRITE.frameHeight,
     };
   };
 
@@ -126,6 +162,7 @@ export function AlbaSprite() {
 
   const spriteFile = getSpriteFile();
   const walkPos = getWalkingSpritePosition();
+  const eatPos = getEatingSpritePosition();
 
   return (
     <div className="relative w-32 h-32">
@@ -148,17 +185,11 @@ export function AlbaSprite() {
                 x: [-4, 4, -4, 4, -4],
                 rotate: [-3, 3, -3, 3, -3]
               }
-            : state === "eating"
-            ? {
-                y: [0, 6, 0], // Slower, gentler head bob
-                rotate: [-1, 1, -1],
-                scale: [1, 0.97, 1]
-              }
             : {}
         }
         transition={{
-          duration: state === "sleeping" ? 2 : state === "purring" ? 0.6 : state === "angry" ? 0.15 : state === "eating" ? 1.2 : 1,
-          repeat: state === "sleeping" || state === "purring" || state === "curious" || state === "angry" || state === "eating" ? Infinity : 0,
+          duration: state === "sleeping" ? 2 : state === "purring" ? 0.6 : state === "angry" ? 0.15 : 1,
+          repeat: state === "sleeping" || state === "purring" || state === "curious" || state === "angry" ? Infinity : 0,
           ease: state === "angry" ? "linear" : "easeInOut",
         }}
       >
@@ -178,6 +209,25 @@ export function AlbaSprite() {
                 backgroundImage: `url(${WALKING_SPRITE.src})`,
                 backgroundSize: "100% 100%",
                 transform: `translate(-${walkPos.x}px, -${walkPos.y}px)`,
+                imageRendering: "pixelated",
+              }}
+            />
+          </div>
+        ) : state === "eating" ? (
+          // Eating animation using sprite sheet
+          <div
+            className="w-32 h-32 overflow-hidden flex items-center justify-center"
+            style={{
+              imageRendering: "pixelated",
+            }}
+          >
+            <div
+              style={{
+                width: EATING_SPRITE.frameWidth * EATING_SPRITE.cols,
+                height: EATING_SPRITE.frameHeight * EATING_SPRITE.rows,
+                backgroundImage: `url(${EATING_SPRITE.src})`,
+                backgroundSize: "100% 100%",
+                transform: `translate(-${eatPos.x}px, -${eatPos.y}px)`,
                 imageRendering: "pixelated",
               }}
             />
