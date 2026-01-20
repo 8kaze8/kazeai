@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import type { DiceState, DiceRollOutcome } from "@/types/dice";
-import { DICE_MIN, DICE_MAX, CRITICAL_FAIL, CRITICAL_SUCCESS } from "@/lib/constants";
+import { CRITICAL_FAIL, CRITICAL_SUCCESS } from "@/lib/constants";
 
 export const useDiceStore = create<DiceState>((set) => ({
   isRolling: false,
@@ -9,7 +9,14 @@ export const useDiceStore = create<DiceState>((set) => ({
   transitionType: "standard",
   navigateTo: null,
   rollDice: (target: string) => {
-    const roll = Math.floor(Math.random() * (DICE_MAX - DICE_MIN + 1)) + DICE_MIN;
+    set({
+      isRolling: true,
+      currentRoll: null,
+      transitionType: "standard",
+      navigateTo: target,
+    });
+  },
+  setRollResult: (roll: number) => {
     let transitionType: DiceRollOutcome = "standard";
 
     if (roll === CRITICAL_FAIL) {
@@ -19,10 +26,8 @@ export const useDiceStore = create<DiceState>((set) => ({
     }
 
     set({
-      isRolling: true,
       currentRoll: roll,
       transitionType,
-      navigateTo: target,
       rollHistory: [...useDiceStore.getState().rollHistory, roll],
     });
   },
@@ -31,7 +36,7 @@ export const useDiceStore = create<DiceState>((set) => ({
       isRolling: false,
       currentRoll: null,
       navigateTo: null,
+      transitionType: "standard",
     });
   },
 }));
-

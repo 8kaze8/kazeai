@@ -7,6 +7,7 @@ export interface DiceState {
   transitionType: DiceRollOutcome;
   navigateTo: string | null;
   rollDice: (target: string) => void;
+  setRollResult: (roll: number) => void;
   completeTransition: () => void;
 }
 

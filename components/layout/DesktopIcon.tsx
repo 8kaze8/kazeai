@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect } from "react";
 import { Icon } from "@/components/ui/Icon";
 import { BorderBeam } from "@/components/magicui/border-beam";
+import { useDiceStore } from "@/store/diceStore";
 
 interface DesktopIconProps {
   icon: {
@@ -34,6 +35,7 @@ export function DesktopIcon({
 }: DesktopIconProps) {
   const [position, setPosition] = useState(savedPosition);
   const [isDragging, setIsDragging] = useState(false);
+  const { rollDice, isRolling } = useDiceStore();
   const dragDataRef = useRef({
     startX: 0,
     startY: 0,
@@ -122,9 +124,10 @@ export function DesktopIcon({
   };
 
   const handleClick = (e: React.MouseEvent) => {
-    // Only navigate if we didn't drag
-    if (!dragDataRef.current.wasDragged && mounted && onNavigate) {
-      onNavigate(icon.path);
+    // Only navigate if we didn't drag and not currently rolling
+    if (!dragDataRef.current.wasDragged && mounted && !isRolling) {
+      // Trigger dice roll instead of direct navigation
+      rollDice(icon.path);
     }
   };
 

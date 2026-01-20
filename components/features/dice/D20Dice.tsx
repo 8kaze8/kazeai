@@ -1,174 +1,169 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { useDiceStore } from "@/store/diceStore";
 
+// Dynamic import for DiceBox since it needs browser APIs
+let DiceBox: any = null;
+
 export function D20Dice() {
-  const { isRolling, currentRoll, transitionType } = useDiceStore();
+  const { isRolling, currentRoll, transitionType, setRollResult } = useDiceStore();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const diceBoxRef = useRef<any>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const hasRolledRef = useRef(false);
 
-  const getDiceColor = () => {
+  // Initialize DiceBox
+  useEffect(() => {
+    const initDiceBox = async () => {
+      if (typeof window === "undefined" || diceBoxRef.current) return;
+
+      try {
+        // Dynamic import
+        const module = await import("@3d-dice/dice-box");
+        DiceBox = module.default || module.DiceBox;
+
+        if (!containerRef.current) return;
+
+        const box = new DiceBox("#dice-canvas", {
+          assetPath: "/assets/",
+          theme: "default",
+          themeColor: "#25f4f4",
+          scale: 14, // Even bigger dice
+          gravity: 1.5,
+          spinForce: 8,
+          throwForce: 5,
+          startingHeight: 10,
+          settleTimeout: 3000,
+          lightIntensity: 1.3,
+          shadowTransparency: 0.3,
+        });
+
+        await box.init();
+        diceBoxRef.current = box;
+        setIsInitialized(true);
+
+        // Listen for roll complete - send result to store
+        box.onRollComplete = (results: any) => {
+          if (results && results[0]) {
+            const rollValue = results[0].value;
+            setRollResult(rollValue);
+          }
+        };
+      } catch (error) {
+        console.error("Failed to initialize DiceBox:", error);
+      }
+    };
+
+    initDiceBox();
+
+    return () => {
+      if (diceBoxRef.current) {
+        try {
+          diceBoxRef.current.clear();
+        } catch (e) {
+          // ignore cleanup errors
+        }
+      }
+    };
+  }, [setRollResult]);
+
+  // Handle rolling
+  useEffect(() => {
+    if (!isRolling || !isInitialized || !diceBoxRef.current) return;
+
+    // Only roll once per isRolling cycle
+    if (hasRolledRef.current) return;
+    hasRolledRef.current = true;
+
+    const rollDice = async () => {
+      try {
+        // Clear previous dice
+        diceBoxRef.current.clear();
+
+        // Roll a d20
+        await diceBoxRef.current.roll("1d20");
+      } catch (error) {
+        console.error("Roll error:", error);
+      }
+    };
+
+    rollDice();
+  }, [isRolling, isInitialized]);
+
+  // Reset hasRolled when rolling stops
+  useEffect(() => {
+    if (!isRolling) {
+      hasRolledRef.current = false;
+    }
+  }, [isRolling]);
+
+  const getColors = () => {
     switch (transitionType) {
       case "criticalFail":
-        return "text-red-400";
+        return {
+          primary: "#ef4444",
+          glow: "rgba(239, 68, 68, 0.8)",
+        };
       case "criticalSuccess":
-        return "text-primary";
+        return {
+          primary: "#25f4f4",
+          glow: "rgba(37, 244, 244, 1)",
+        };
       default:
-        return "text-primary";
+        return {
+          primary: "#25f4f4",
+          glow: "rgba(37, 244, 244, 0.6)",
+        };
     }
   };
 
-  const getGlowColor = () => {
-    switch (transitionType) {
-      case "criticalFail":
-        return "rgba(239, 68, 68, 0.8)";
-      case "criticalSuccess":
-        return "rgba(37, 244, 244, 1)";
-      default:
-        return "rgba(37, 244, 244, 0.6)";
-    }
-  };
+  const colors = getColors();
 
   return (
-    <div className="relative flex items-center justify-center perspective-1000">
+    <div className="relative flex flex-col items-center justify-center">
+      {/* Glow effect */}
       <motion.div
-        className="relative"
+        className="absolute rounded-full pointer-events-none"
         style={{
-          width: "80px",
-          height: "80px",
-          transformStyle: "preserve-3d",
+          width: 400,
+          height: 400,
+          background: `radial-gradient(circle, ${colors.glow} 0%, transparent 70%)`,
+          filter: "blur(40px)",
         }}
-        animate={
-          isRolling
-            ? {
-                rotateX: [0, 360, 720, 1080],
-                rotateY: [0, 360, 720, 1080],
-                rotateZ: [0, 180, 360, 540],
-              }
-            : {
-                rotateX: 0,
-                rotateY: 0,
-                rotateZ: 0,
-              }
-        }
+        animate={{
+          scale: currentRoll ? [1, 1.3, 1.1] : [1, 1.15, 1],
+          opacity: currentRoll ? [0.5, 0.9, 0.7] : [0.3, 0.5, 0.3],
+        }}
         transition={{
-          duration: 1.5,
-          ease: "easeOut",
-          repeat: isRolling ? Infinity : 0,
+          duration: currentRoll ? 0.5 : 1.5,
+          repeat: currentRoll ? 0 : Infinity,
+          ease: "easeInOut",
         }}
-      >
-        {/* 3D D20 Icosahedron - Simplified but realistic */}
-        <svg
-          width="80"
-          height="80"
-          viewBox="0 0 80 80"
-          className={getDiceColor()}
-          style={{
-            filter: `drop-shadow(0 0 15px ${getGlowColor()})`,
-          }}
-        >
-          {/* Top pyramid faces */}
-          <motion.polygon
-            points="40,10 60,25 40,40 20,25"
-            fill="currentColor"
-            fillOpacity="0.3"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinejoin="round"
-            animate={isRolling ? { opacity: [0.3, 0.6, 0.3] } : { opacity: 0.3 }}
-            transition={{ duration: 0.3, repeat: isRolling ? Infinity : 0 }}
+      />
+
+      {/* 3D Dice Canvas Container - Much bigger now */}
+      <div
+        ref={containerRef}
+        id="dice-canvas"
+        className="relative z-10"
+        style={{
+          width: 400,
+          height: 400,
+        }}
+      />
+
+      {/* Fallback / Loading state */}
+      {!isInitialized && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <motion.div
+            className="w-24 h-24 border-4 border-primary/30 border-t-primary rounded-full"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
           />
-          <motion.polygon
-            points="40,10 55,30 40,50 25,30"
-            fill="currentColor"
-            fillOpacity="0.25"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinejoin="round"
-            animate={isRolling ? { opacity: [0.25, 0.5, 0.25] } : { opacity: 0.25 }}
-            transition={{ duration: 0.3, repeat: isRolling ? Infinity : 0, delay: 0.1 }}
-          />
-          
-          {/* Middle band */}
-          <motion.polygon
-            points="25,30 55,30 50,50 30,50"
-            fill="currentColor"
-            fillOpacity="0.2"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinejoin="round"
-            animate={isRolling ? { opacity: [0.2, 0.4, 0.2] } : { opacity: 0.2 }}
-            transition={{ duration: 0.3, repeat: isRolling ? Infinity : 0, delay: 0.15 }}
-          />
-          
-          {/* Bottom pyramid faces */}
-          <motion.polygon
-            points="40,50 55,30 40,70 25,30"
-            fill="currentColor"
-            fillOpacity="0.25"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinejoin="round"
-            animate={isRolling ? { opacity: [0.25, 0.5, 0.25] } : { opacity: 0.25 }}
-            transition={{ duration: 0.3, repeat: isRolling ? Infinity : 0, delay: 0.2 }}
-          />
-          <motion.polygon
-            points="40,40 60,25 40,70 20,25"
-            fill="currentColor"
-            fillOpacity="0.3"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinejoin="round"
-            animate={isRolling ? { opacity: [0.3, 0.6, 0.3] } : { opacity: 0.3 }}
-            transition={{ duration: 0.3, repeat: isRolling ? Infinity : 0, delay: 0.25 }}
-          />
-          
-          {/* Edges for 3D effect */}
-          <motion.line
-            x1="40"
-            y1="10"
-            x2="40"
-            y2="70"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeOpacity="0.5"
-            animate={isRolling ? { opacity: [0.5, 0.8, 0.5] } : { opacity: 0.5 }}
-            transition={{ duration: 0.3, repeat: isRolling ? Infinity : 0 }}
-          />
-          <motion.line
-            x1="20"
-            y1="25"
-            x2="60"
-            y2="25"
-            stroke="currentColor"
-            strokeWidth="1"
-            strokeOpacity="0.4"
-            animate={isRolling ? { opacity: [0.4, 0.7, 0.4] } : { opacity: 0.4 }}
-            transition={{ duration: 0.3, repeat: isRolling ? Infinity : 0, delay: 0.1 }}
-          />
-          
-          {/* Center number */}
-          {currentRoll && (
-            <motion.text
-              x="40"
-              y="45"
-              textAnchor="middle"
-              dominantBaseline="middle"
-              fontSize="28"
-              fontWeight="bold"
-              fill="currentColor"
-              className="font-mono"
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 1.5, type: "spring", stiffness: 200 }}
-              style={{
-                textShadow: `0 0 10px ${getGlowColor()}, 0 0 20px ${getGlowColor()}`,
-              }}
-            >
-              {currentRoll}
-            </motion.text>
-          )}
-        </svg>
-      </motion.div>
+        </div>
+      )}
     </div>
   );
 }

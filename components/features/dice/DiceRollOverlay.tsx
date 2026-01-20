@@ -1,272 +1,351 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { animate } from "animejs";
 import { useDiceStore } from "@/store/diceStore";
-import { useNavigationStore } from "@/store/navigationStore";
 import { useAlbaStore } from "@/store/albaStore";
 import { D20Dice } from "./D20Dice";
 import { Confetti } from "@/components/magicui/confetti";
-import { criticalFail, criticalSuccess, standardTransition } from "@/lib/animations";
+import { Sparkles } from "@/components/magicui/sparkles";
+import { GlitchText } from "@/components/magicui/glitch-text";
+import { ScreenCrack } from "@/components/magicui/screen-crack";
+import { BorderBeam } from "@/components/magicui/border-beam";
 
 export function DiceRollOverlay() {
   const router = useRouter();
   const { isRolling, currentRoll, transitionType, navigateTo, completeTransition } = useDiceStore();
-  const { setIsTransitioning } = useNavigationStore();
   const { setState: setAlbaState } = useAlbaStore();
-  const overlayRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const errorMessageRef = useRef<HTMLParagraphElement>(null);
-  const successMessageRef = useRef<HTMLParagraphElement>(null);
+  const [phase, setPhase] = useState<"rolling" | "result" | "transitioning">("rolling");
 
-  // Critical Fail Animation
+  // Reset phase when rolling starts
   useEffect(() => {
-    if (isRolling && transitionType === "criticalFail" && overlayRef.current) {
-      // Alba kızgın ol
-      setAlbaState("angry");
-
-      // Screen shake
-      animate(overlayRef.current, {
-        translateX: [0, -20, 20, -20, 20, 0],
-        translateY: [0, -10, 10, -10, 10, 0],
-        duration: 500,
-        complete: () => {
-          // Red flash
-          if (overlayRef.current) {
-            animate(overlayRef.current, {
-              backgroundColor: [
-                "rgba(26, 13, 13, 1)",
-                "rgba(239, 68, 68, 0.3)",
-                "rgba(26, 13, 13, 1)",
-              ],
-              duration: 300,
-              complete: () => {
-                // Error message scale
-                if (errorMessageRef.current) {
-                  animate(errorMessageRef.current, {
-                    scale: [0, 1.2, 1],
-                    opacity: [0, 1],
-                    duration: 400,
-                    easing: "easeOutElastic(1, .8)",
-                  });
-                }
-              },
-            });
-          }
-        },
-      });
-
-      // Ana sayfaya dön
-      setTimeout(() => {
-        completeTransition();
-        router.push("/");
-        setIsTransitioning(false);
-        setAlbaState("awake");
-      }, 2000);
+    if (isRolling) {
+      setPhase("rolling");
     }
-  }, [isRolling, transitionType, router, completeTransition, setIsTransitioning, setAlbaState]);
+  }, [isRolling]);
 
-  // Critical Success Animation
+  // Handle roll result
   useEffect(() => {
-    if (isRolling && transitionType === "criticalSuccess" && overlayRef.current) {
-      // Alba mutlu ol
-      setAlbaState("purring");
+    if (isRolling && currentRoll !== null) {
+      // Show result after dice animation
+      const resultTimer = setTimeout(() => {
+        setPhase("result");
 
-      // Dice büyüme + rotate
-      const diceContainer = document.querySelector(".dice-container");
-      if (diceContainer) {
-        animate(diceContainer, {
-          scale: [1, 1.3, 1],
-          rotate: [0, 360],
-          duration: 800,
-          easing: "easeOutElastic(1, .8)",
-          complete: () => {
-            // Success message
-            if (successMessageRef.current) {
-              animate(successMessageRef.current, {
-                scale: [0, 1.2, 1],
-                opacity: [0, 1],
-                duration: 600,
-                easing: "easeOutElastic(1, .8)",
-                complete: () => {
-                  // Glow efekti
-                  if (successMessageRef.current) {
-                    animate(successMessageRef.current, {
-                      textShadow: [
-                        "0 0 0px rgba(37,244,244,0)",
-                        "0 0 30px rgba(37,244,244,1)",
-                        "0 0 60px rgba(37,244,244,0.8)",
-                      ],
-                      duration: 1000,
-                      easing: "easeInOut",
-                    });
-                  }
-                },
-              });
-            }
-          },
-        });
-      }
-
-      // Navigate after animation
-      setTimeout(() => {
-        if (navigateTo) {
-          completeTransition();
-          router.push(navigateTo);
-          setIsTransitioning(false);
-          setAlbaState("awake");
+        // Set Alba state based on result
+        if (transitionType === "criticalFail") {
+          setAlbaState("angry");
+        } else if (transitionType === "criticalSuccess") {
+          setAlbaState("purring");
         }
-      }, 3000);
+      }, 500);
+
+      // Navigate or redirect after showing result
+      const navigateTimer = setTimeout(() => {
+        setPhase("transitioning");
+
+        setTimeout(() => {
+          completeTransition();
+
+          if (transitionType === "criticalFail") {
+            router.push("/");
+          } else if (navigateTo) {
+            router.push(navigateTo);
+          }
+
+          // Reset Alba state after a delay
+          setTimeout(() => {
+            setAlbaState("awake");
+          }, 500);
+        }, 200);
+      }, transitionType === "criticalSuccess" ? 2500 : transitionType === "criticalFail" ? 2200 : 1400);
+
+      return () => {
+        clearTimeout(resultTimer);
+        clearTimeout(navigateTimer);
+      };
     }
-  }, [isRolling, transitionType, navigateTo, router, completeTransition, setIsTransitioning, setAlbaState]);
+  }, [isRolling, currentRoll, transitionType, navigateTo, completeTransition, router, setAlbaState]);
 
-  // Auto-navigate for standard rolls
-  useEffect(() => {
-    if (isRolling && navigateTo && currentRoll !== null && transitionType === "standard") {
-      const timer = setTimeout(() => {
-        completeTransition();
-        router.push(navigateTo);
-        setIsTransitioning(false);
-      }, 2500);
-
-      return () => clearTimeout(timer);
-    }
-  }, [isRolling, navigateTo, currentRoll, transitionType, completeTransition, router, setIsTransitioning]);
-
-  const getOverlayStyle = () => {
+  const getModalStyle = () => {
     switch (transitionType) {
       case "criticalFail":
-        return "bg-[#1a0d0d] border-red-500/30";
+        return "from-[#1a0d0d] via-[#2d1515] to-[#1a0d0d] border-red-500/50";
       case "criticalSuccess":
-        return "bg-[#1a1a0d] border-primary/50";
+        return "from-[#0d1a0d] via-[#1a2f1a] to-[#0d1a0d] border-yellow-500/50";
       default:
-        return "bg-background-dark border-primary/30";
+        return "from-[#0d1517] via-[#0f1c1f] to-[#0d1517] border-primary/30";
     }
   };
 
   const getMessage = () => {
     switch (transitionType) {
       case "criticalFail":
-        return "CRITICAL FAIL! // Automation Error: Human intervention required";
+        return {
+          title: "CRITICAL FAIL!",
+          subtitle: "The dice gods are not pleased...",
+        };
       case "criticalSuccess":
-        return "NATURAL 20! // CRITICAL SUCCESS!";
+        return {
+          title: "NATURAL 20!",
+          subtitle: "CRITICAL SUCCESS!",
+        };
       default:
-        return `ROLLED: ${currentRoll}`;
+        return {
+          title: `ROLLED: ${currentRoll}`,
+          subtitle: "Success!",
+        };
     }
   };
 
-  const getMessageColor = () => {
-    switch (transitionType) {
-      case "criticalFail":
-        return "text-red-400";
-      case "criticalSuccess":
-        return "text-primary";
-      default:
-        return "text-primary";
-    }
-  };
+  const message = getMessage();
 
   return (
     <AnimatePresence>
       {isRolling && (
         <>
-          {/* Confetti for critical success */}
-          {transitionType === "criticalSuccess" && <Confetti duration={3000} />}
-          
+          {/* Critical Success Effects */}
+          {transitionType === "criticalSuccess" && phase === "result" && (
+            <>
+              <Confetti duration={3000} colors={["#FFD700", "#FFA500", "#FFEC8B", "#25f4f4", "#a6e3a1"]} />
+              <Sparkles count={40} duration={2500} />
+            </>
+          )}
+
+          {/* Critical Fail Effects */}
+          {transitionType === "criticalFail" && phase === "result" && (
+            <ScreenCrack duration={2000} />
+          )}
+
+          {/* Backdrop */}
           <motion.div
-            ref={overlayRef}
-            className={`fixed inset-0 z-50 flex flex-col items-center justify-center ${getOverlayStyle()} border-2 relative overflow-hidden`}
-            variants={standardTransition}
-            initial="hidden"
-            animate="visible"
-            exit="hidden"
+            className={`fixed inset-0 z-[9998] backdrop-blur-sm ${
+              transitionType === "criticalFail" && phase === "result"
+                ? "bg-red-900/30"
+                : transitionType === "criticalSuccess" && phase === "result"
+                ? "bg-yellow-900/20"
+                : "bg-black/60"
+            }`}
+            initial={{ opacity: 0 }}
+            animate={{
+              opacity: 1,
+              backgroundColor: transitionType === "criticalFail" && phase === "result"
+                ? ["rgba(127, 29, 29, 0.3)", "rgba(127, 29, 29, 0.5)", "rgba(127, 29, 29, 0.3)"]
+                : undefined
+            }}
+            exit={{ opacity: 0 }}
+            transition={{
+              duration: 0.2,
+              backgroundColor: { duration: 0.3, repeat: 2 }
+            }}
+          />
+
+          {/* Modal */}
+          <motion.div
+            className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
           >
-            {/* Scanline overlay for retro effect */}
-            <div className="absolute inset-0 scanline opacity-10 pointer-events-none"></div>
-            
-            {/* Grid pattern background */}
-            <div className="absolute inset-0 bg-grid-pattern bg-[length:40px_40px] opacity-5 pointer-events-none"></div>
-
             <motion.div
-              ref={contentRef}
-              className="flex flex-col items-center gap-6 relative z-10"
+              className={`relative bg-gradient-to-br ${getModalStyle()} rounded-2xl border-2 shadow-2xl overflow-hidden`}
+              style={{
+                width: "min(500px, 90vw)",
+                maxHeight: "90vh",
+              }}
+              initial={{ scale: 0.8, y: 20 }}
+              animate={{
+                scale: 1,
+                y: 0,
+                x: transitionType === "criticalFail" && phase === "result"
+                  ? [-8, 8, -6, 6, -4, 4, -2, 2, 0]
+                  : 0,
+                rotate: transitionType === "criticalFail" && phase === "result"
+                  ? [-1, 1, -1, 1, 0]
+                  : 0,
+              }}
+              exit={{ scale: 0.8, y: 20, opacity: 0 }}
+              transition={{
+                type: "spring",
+                stiffness: 300,
+                damping: 25,
+                x: { duration: 0.5, ease: "easeInOut" },
+                rotate: { duration: 0.5, ease: "easeInOut" }
+              }}
             >
-              {/* Terminal-style header */}
-              <motion.div
-                className="flex items-center gap-2 mb-4"
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-              >
-                <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
-                <span className="text-primary/60 text-xs font-mono uppercase tracking-widest">
-                  SKILL CHECK // D20 ROLL
-                </span>
-              </motion.div>
+              {/* BorderBeam for critical success */}
+              {transitionType === "criticalSuccess" && phase === "result" && (
+                <BorderBeam
+                  colorFrom="#FFD700"
+                  colorTo="#FFA500"
+                  size={300}
+                  borderWidth={3}
+                />
+              )}
 
-              <div className="dice-container">
-                <D20Dice />
-              </div>
-              
-              {currentRoll && (
+              {/* Red pulse border for critical fail */}
+              {transitionType === "criticalFail" && phase === "result" && (
                 <motion.div
-                  className="flex flex-col items-center gap-2 px-4"
-                  initial={{ opacity: 0, y: 20 }}
+                  className="absolute inset-0 rounded-2xl pointer-events-none"
+                  style={{
+                    boxShadow: "inset 0 0 30px rgba(239, 68, 68, 0.5)",
+                  }}
+                  animate={{
+                    boxShadow: [
+                      "inset 0 0 30px rgba(239, 68, 68, 0.5)",
+                      "inset 0 0 60px rgba(239, 68, 68, 0.8)",
+                      "inset 0 0 30px rgba(239, 68, 68, 0.5)",
+                    ],
+                  }}
+                  transition={{ duration: 0.5, repeat: Infinity }}
+                />
+              )}
+
+              {/* Scanlines */}
+              <div
+                className="absolute inset-0 pointer-events-none opacity-5"
+                style={{
+                  backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.3) 2px, rgba(0,0,0,0.3) 4px)",
+                }}
+              />
+
+              {/* Content */}
+              <div className="relative z-10 flex flex-col items-center p-6">
+                {/* Header */}
+                <motion.div
+                  className="flex items-center gap-3 mb-4"
+                  initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.5 }}
+                  transition={{ delay: 0.1 }}
                 >
-                  {transitionType === "criticalFail" && (
-                    <p
-                      ref={errorMessageRef}
-                      className="text-red-400 text-4xl md:text-5xl font-bold font-mono tracking-wider text-center"
-                      style={{
-                        textShadow: "0 0 20px rgba(239,68,68,0.8), 0 0 40px rgba(239,68,68,0.4)",
-                      }}
+                  <motion.div
+                    className={`w-2 h-2 rounded-full ${
+                      transitionType === "criticalFail" ? "bg-red-500" :
+                      transitionType === "criticalSuccess" ? "bg-yellow-400" : "bg-primary"
+                    }`}
+                    animate={{ opacity: [1, 0.3, 1] }}
+                    transition={{ duration: 1, repeat: Infinity }}
+                  />
+                  <span className={`text-xs font-mono uppercase tracking-[0.2em] ${
+                    transitionType === "criticalFail" ? "text-red-400/70" :
+                    transitionType === "criticalSuccess" ? "text-yellow-400/70" : "text-primary/70"
+                  }`}>
+                    SKILL CHECK // D20
+                  </span>
+                  <motion.div
+                    className={`w-2 h-2 rounded-full ${
+                      transitionType === "criticalFail" ? "bg-red-500" :
+                      transitionType === "criticalSuccess" ? "bg-yellow-400" : "bg-primary"
+                    }`}
+                    animate={{ opacity: [1, 0.3, 1] }}
+                    transition={{ duration: 1, repeat: Infinity, delay: 0.5 }}
+                  />
+                </motion.div>
+
+                {/* Dice */}
+                <D20Dice />
+
+                {/* Result message */}
+                <AnimatePresence>
+                  {phase === "result" && (
+                    <motion.div
+                      className="flex flex-col items-center gap-2 text-center mt-4"
+                      initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 25 }}
                     >
-                      CRITICAL FAIL!
-                    </p>
+                      {/* Title with special effects */}
+                      {transitionType === "criticalFail" ? (
+                        <GlitchText
+                          text={message.title}
+                          className="text-4xl md:text-5xl font-bold font-mono tracking-wider text-red-400"
+                        />
+                      ) : transitionType === "criticalSuccess" ? (
+                        <motion.h1
+                          className="text-4xl md:text-5xl font-bold font-mono tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-400 to-orange-400"
+                          style={{
+                            textShadow: "0 0 30px rgba(255, 215, 0, 0.8), 0 0 60px rgba(255, 165, 0, 0.5)",
+                          }}
+                          animate={{
+                            scale: [1, 1.05, 1],
+                            textShadow: [
+                              "0 0 30px rgba(255, 215, 0, 0.8), 0 0 60px rgba(255, 165, 0, 0.5)",
+                              "0 0 50px rgba(255, 215, 0, 1), 0 0 100px rgba(255, 165, 0, 0.8)",
+                              "0 0 30px rgba(255, 215, 0, 0.8), 0 0 60px rgba(255, 165, 0, 0.5)",
+                            ],
+                          }}
+                          transition={{ duration: 0.8, repeat: Infinity }}
+                        >
+                          {message.title}
+                        </motion.h1>
+                      ) : (
+                        <motion.h1
+                          className="text-4xl md:text-5xl font-bold font-mono tracking-wider text-primary"
+                          style={{
+                            textShadow: "0 0 20px rgba(37, 244, 244, 0.8)",
+                          }}
+                        >
+                          {message.title}
+                        </motion.h1>
+                      )}
+
+                      {/* Subtitle */}
+                      <motion.p
+                        className={`text-sm md:text-base font-medium ${
+                          transitionType === "criticalFail"
+                            ? "text-red-300/70"
+                            : transitionType === "criticalSuccess"
+                            ? "text-yellow-300/70"
+                            : "text-primary/70"
+                        }`}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.2 }}
+                      >
+                        {message.subtitle}
+                      </motion.p>
+
+                    </motion.div>
                   )}
-                  
-                  {transitionType === "criticalSuccess" && (
-                    <p
-                      ref={successMessageRef}
-                      className="text-primary text-5xl md:text-6xl font-bold font-mono tracking-wider text-center"
-                      style={{
-                        textShadow: "0 0 30px rgba(37,244,244,1), 0 0 60px rgba(37,244,244,0.8)",
-                      }}
-                    >
-                      NATURAL 20!
-                    </p>
-                  )}
-                  
-                  {transitionType === "standard" && (
-                    <motion.p
-                      className={`text-xl md:text-2xl font-bold font-mono ${getMessageColor()} tracking-wider text-center`}
-                      style={{
-                        textShadow: "0 0 10px rgba(37,244,244,0.5)",
-                      }}
-                    >
-                      {getMessage()}
-                    </motion.p>
-                  )}
-                  
-                  <motion.p
-                    className="text-white/40 text-xs font-mono mt-2"
+                </AnimatePresence>
+
+                {/* Loading indicator during roll */}
+                {phase === "rolling" && (
+                  <motion.div
+                    className="flex items-center gap-2 text-primary/50 mt-4 text-sm"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    transition={{ delay: transitionType === "criticalSuccess" ? 2.5 : transitionType === "criticalFail" ? 1.5 : 2 }}
+                    transition={{ delay: 0.3 }}
                   >
-                    {transitionType === "criticalSuccess" 
-                      ? ">> CRITICAL SUCCESS! System access granted <<"
-                      : transitionType === "criticalFail"
-                      ? ">> Error detected, redirecting to home... <<"
-                      : ">> Transitioning... <<"
-                    }
-                  </motion.p>
-                </motion.div>
-              )}
+                    <span>Rolling</span>
+                    {[0, 1, 2].map((i) => (
+                      <motion.span
+                        key={i}
+                        animate={{ opacity: [0.3, 1, 0.3] }}
+                        transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
+                      >
+                        .
+                      </motion.span>
+                    ))}
+                  </motion.div>
+                )}
+              </div>
+
+              {/* Corner accents - color based on result */}
+              {["top-2 left-2 border-l-2 border-t-2 rounded-tl-lg",
+                "top-2 right-2 border-r-2 border-t-2 rounded-tr-lg",
+                "bottom-2 left-2 border-l-2 border-b-2 rounded-bl-lg",
+                "bottom-2 right-2 border-r-2 border-b-2 rounded-br-lg"
+              ].map((pos, i) => (
+                <div
+                  key={i}
+                  className={`absolute w-8 h-8 ${pos} ${
+                    transitionType === "criticalFail" ? "border-red-500/40" :
+                    transitionType === "criticalSuccess" ? "border-yellow-400/40" : "border-primary/40"
+                  }`}
+                />
+              ))}
             </motion.div>
           </motion.div>
         </>
@@ -274,4 +353,3 @@ export function DiceRollOverlay() {
     </AnimatePresence>
   );
 }
-

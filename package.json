@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@3d-dice/dice-box": "^1.1.4",
     "animejs": "^4.3.0",
     "clsx": "^2.1.1",
     "framer-motion": "^11.0.0",
