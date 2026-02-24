@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import "../styles/globals.css";
 import { Providers } from "@/components/providers/Providers";
-import { DesktopEnvironment } from "@/components/layout/DesktopEnvironment";
-import { DiceRollOverlay } from "@/components/features/dice/DiceRollOverlay";
 
 export const metadata: Metadata = {
   title: "KazeOS v1.1 - Desktop Environment",
@@ -21,10 +19,7 @@ export default function RootLayout({
     <html lang="en" className="dark" suppressHydrationWarning>
       <body className="bg-background-light dark:bg-background-dark overflow-hidden h-screen w-screen relative font-display selection:bg-primary/30 selection:text-primary" suppressHydrationWarning>
         <Providers>
-          <DesktopEnvironment>
-            <DiceRollOverlay />
-            {children}
-          </DesktopEnvironment>
+          {children}
         </Providers>
       </body>
     </html>

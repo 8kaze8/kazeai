@@ -30,6 +30,13 @@ yarn-error.log*
 # vercel
 .vercel
 
+# mcp config
+.mcp.json
+
+# claude
+.claude/
+tasks/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

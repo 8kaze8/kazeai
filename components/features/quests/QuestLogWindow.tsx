@@ -5,96 +5,9 @@ import { useRouter } from "next/navigation";
 import { animate } from "animejs";
 import { Icon } from "@/components/ui/Icon";
 import { WindowContainer } from "@/components/ui/WindowContainer";
+import type { Quest } from "@/lib/supabase/types";
 
-interface Quest {
-  id: string;
-  title: string;
-  client: string;
-  class: string;
-  questId: string;
-  completed: string;
-  briefing: string;
-  loot: {
-    responseTime: string;
-    costReduction: string;
-    csatScore: string;
-  };
-  techStack: string[];
-  images: string[];
-}
-
-const quests: Quest[] = [
-  {
-    id: "chatbot-oracle",
-    title: "The Chatbot Oracle",
-    client: "FinTech Corp",
-    class: "AI Automation",
-    questId: "#A7X-99",
-    completed: "2023-11-15",
-    briefing:
-      "The client faced a massive influx of customer queries, resulting in 48h+ wait times. The objective was to engineer a sovereign AI agent capable of handling Tier-1 support tickets autonomously while seamlessly escalating complex issues to human operators.",
-    loot: {
-      responseTime: "Instant",
-      costReduction: "+40%",
-      csatScore: "4.8/5",
-    },
-    techStack: ["Python", "OpenAI API", "LangChain", "FastAPI", "Redis"],
-    images: [],
-  },
-  {
-    id: "email-sentinel",
-    title: "Automated Email Sentinel",
-    client: "E-com Giants",
-    class: "Workflow Automation",
-    questId: "#B2Y-45",
-    completed: "2023-09-20",
-    briefing:
-      "Implemented an intelligent email processing system that automatically categorizes, routes, and responds to customer inquiries using n8n workflows.",
-    loot: {
-      responseTime: "< 5min",
-      costReduction: "+35%",
-      csatScore: "4.6/5",
-    },
-    techStack: ["n8n", "Node.js", "PostgreSQL", "SMTP"],
-    images: [],
-  },
-  {
-    id: "data-pipeline",
-    title: "Data Pipeline Construct",
-    client: "HealthData Inc",
-    class: "Data Engineering",
-    questId: "#C3Z-12",
-    completed: "2023-07-10",
-    briefing:
-      "Built a robust ETL pipeline that processes millions of health records daily, ensuring data quality and compliance with healthcare regulations.",
-    loot: {
-      responseTime: "Real-time",
-      costReduction: "+50%",
-      csatScore: "4.9/5",
-    },
-    techStack: ["Python", "Apache Airflow", "PostgreSQL", "Docker"],
-    images: [],
-  },
-  {
-    id: "legacy-migration",
-    title: "Legacy System Migration",
-    client: "OldBank Ltd",
-    class: "System Integration",
-    questId: "#D4A-78",
-    completed: "2023-05-05",
-    briefing:
-      "Migrated legacy banking systems to modern cloud infrastructure with zero downtime, ensuring seamless customer experience throughout the transition.",
-    loot: {
-      responseTime: "Zero Downtime",
-      costReduction: "+45%",
-      csatScore: "4.7/5",
-    },
-    techStack: ["AWS", "Terraform", "Kubernetes", "n8n"],
-    images: [],
-  },
-];
-
-export function QuestLogWindow() {
+export function QuestLogWindow({ quests }: { quests: Quest[] }) {
   const router = useRouter();
   const [selectedQuest, setSelectedQuest] = useState<Quest>(quests[0]);
   const [questType, setQuestType] = useState<"main" | "side">("main");
@@ -284,7 +197,7 @@ export function QuestLogWindow() {
                     {selectedQuest.title}
                   </h2>
                   <p className="text-gray-400 font-mono text-sm">
-                    Quest ID: {selectedQuest.questId} {/* Completed: */}{" "}
+                    Quest ID: {selectedQuest.quest_id} {/* Completed: */}{" "}
                     {selectedQuest.completed}
                   </p>
                 </div>
@@ -352,7 +265,7 @@ export function QuestLogWindow() {
                     Equipment (Tech Stack)
                   </h3>
                   <div className="flex flex-wrap gap-2">
-                    {selectedQuest.techStack.map((tech, index) => (
+                    {selectedQuest.tech_stack.map((tech, index) => (
                       <span
                         key={index}
                         className={`px-3 py-1.5 rounded-md bg-[#1a2c2c] border text-xs font-mono hover:border-white hover:text-white transition-colors cursor-default ${

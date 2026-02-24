@@ -4,104 +4,12 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "@/components/ui/Icon";
 import { WindowContainer } from "@/components/ui/WindowContainer";
+import type { InventoryItem } from "@/lib/supabase/types";
 
-interface InventoryItem {
-  id: string;
-  name: string;
-  level: number;
-  stat: string;
-  icon: string;
-  rarity: "common" | "rare" | "epic" | "legendary";
-  description: string;
-  power: number;
-  weight: string;
-  durability: string;
-}
-
-const inventoryItems: InventoryItem[] = [
-  {
-    id: "python",
-    name: "Python Script",
-    level: 99,
-    stat: "+50 Intelligence",
-    icon: "code",
-    rarity: "legendary",
-    description:
-      "A powerful ancient script capable of automating complex tasks and summoning AI entities. Highly versatile in combat and utility.",
-    power: 99,
-    weight: "0.5 kg",
-    durability: "Infinite",
-  },
-  {
-    id: "n8n",
-    name: "n8n Node",
-    level: 85,
-    stat: "+30 Speed",
-    icon: "hub",
-    rarity: "epic",
-    description:
-      "Workflow automation node that connects systems seamlessly. Increases automation efficiency.",
-    power: 85,
-    weight: "0.3 kg",
-    durability: "High",
-  },
-  {
-    id: "zapier",
-    name: "Zapier Amulet",
-    level: 90,
-    stat: "+40 Connection",
-    icon: "bolt",
-    rarity: "epic",
-    description:
-      "Magical amulet that creates instant connections between applications.",
-    power: 90,
-    weight: "0.2 kg",
-    durability: "High",
-  },
-  {
-    id: "typescript",
-    name: "TypeScript Shield",
-    level: 80,
-    stat: "+25 Dexterity",
-    icon: "shield",
-    rarity: "rare",
-    description:
-      "Type-safe shield that protects against runtime errors and bugs.",
-    power: 80,
-    weight: "0.4 kg",
-    durability: "Very High",
-  },
-  {
-    id: "postgres",
-    name: "Postgres Vault",
-    level: 75,
-    stat: "+20 Strength",
-    icon: "database",
-    rarity: "rare",
-    description: "Secure vault for storing and retrieving structured data.",
-    power: 75,
-    weight: "1.0 kg",
-    durability: "Very High",
-  },
-  {
-    id: "gpt4",
-    name: "GPT-4 Core",
-    level: 95,
-    stat: "+60 Wisdom",
-    icon: "psychology",
-    rarity: "legendary",
-    description:
-      "Advanced AI core that provides intelligent insights and solutions.",
-    power: 95,
-    weight: "0.1 kg",
-    durability: "Infinite",
-  },
-];
-
-export function InventoryWindow() {
+export function InventoryWindow({ items }: { items: InventoryItem[] }) {
   const router = useRouter();
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(
-    inventoryItems[0]
+    items[0]
   );
   const [filter, setFilter] = useState("all");
 
@@ -266,7 +174,7 @@ export function InventoryWindow() {
           {/* Grid Content */}
           <div className="flex-1 overflow-y-auto p-2 md:p-3 min-h-0">
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
-              {inventoryItems.map((item) => (
+              {items.map((item) => (
                 <button
                   key={item.id}
                   onClick={() => setSelectedItem(item)}
