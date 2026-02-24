@@ -91,7 +91,7 @@ export default function AdminLoginPage() {
                   borderColor: "rgba(37, 244, 244, 0.1)",
                   color: "#e0f0f0",
                 }}
-                placeholder="hey@kazeai.dev"
+                placeholder="admin@example.com"
               />
             </div>
 
