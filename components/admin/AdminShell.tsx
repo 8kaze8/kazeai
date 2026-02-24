@@ -51,7 +51,7 @@ export default function AdminShell({
         {/* Nav Items */}
         <nav className="flex-1 p-2 flex flex-col gap-0.5 mt-1">
           <p className="text-[9px] text-primary/20 font-mono px-2 mb-1">
-            // content
+            content
           </p>
           {navItems.map((item) => (
             <Link

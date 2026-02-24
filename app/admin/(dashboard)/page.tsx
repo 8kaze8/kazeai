@@ -42,7 +42,7 @@ export default async function AdminDashboard() {
           DASHBOARD
         </h1>
         <p className="text-[10px] text-primary/30 mt-0.5 font-mono">
-          {total} entries // all_collections
+          {total} entries all_collections
         </p>
       </div>
 
@@ -80,7 +80,7 @@ export default async function AdminDashboard() {
       {/* System Status */}
       <div className="mt-4 p-2 md:p-3 rounded-lg bg-[#162a2a] border border-white/5">
         <p className="text-[9px] font-mono text-primary/20 mb-1.5">
-          // system_status
+          system_status
         </p>
         <div className="flex gap-3 text-[10px]">
           <span className="text-primary/30">
