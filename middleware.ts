@@ -2,6 +2,21 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
+  const hostname = request.headers.get("host") ?? "";
+  const isAdminSubdomain = hostname.startsWith("admin.");
+
+  // Subdomain routing: admin.kazeai.dev → /admin/*
+  if (isAdminSubdomain) {
+    const path = request.nextUrl.pathname;
+
+    // Already on /admin path — continue
+    if (!path.startsWith("/admin")) {
+      const url = request.nextUrl.clone();
+      url.pathname = path === "/" ? "/admin" : `/admin${path}`;
+      return NextResponse.rewrite(url);
+    }
+  }
+
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(
