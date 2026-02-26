@@ -9,12 +9,19 @@ export async function middleware(request: NextRequest) {
   if (isAdminSubdomain) {
     const path = request.nextUrl.pathname;
 
-    // Already on /admin path — continue
     if (!path.startsWith("/admin")) {
       const url = request.nextUrl.clone();
       url.pathname = path === "/" ? "/admin" : `/admin${path}`;
       return NextResponse.rewrite(url);
     }
+  }
+
+  // Block /admin on main domain → redirect to subdomain
+  if (!isAdminSubdomain && request.nextUrl.pathname.startsWith("/admin")) {
+    const path = request.nextUrl.pathname.replace(/^\/admin/, "") || "/";
+    return NextResponse.redirect(
+      new URL(`https://admin.kazeai.dev${path}`)
+    );
   }
 
   let supabaseResponse = NextResponse.next({ request });
