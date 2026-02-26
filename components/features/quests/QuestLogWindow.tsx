@@ -66,7 +66,7 @@ export function QuestLogWindow({ quests }: { quests: Quest[] }) {
   }, []);
 
   return (
-    <WindowContainer className="relative w-full max-w-4xl max-h-[calc(100vh-12rem)] md:max-h-[75vh] flex flex-col bg-[#102323]/95 backdrop-blur-md border border-primary/30 rounded-xl shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden z-10">
+    <WindowContainer className="relative w-full max-w-5xl max-h-[calc(100vh-12rem)] md:max-h-[80vh] flex flex-col bg-[#102323]/95 backdrop-blur-md border border-primary/30 rounded-xl shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden z-10">
       {/* Window Header */}
       <div className="flex items-center justify-between px-3 py-2 bg-gradient-to-r from-[#162a2a] to-[#102323] border-b border-primary/20">
         <div className="flex items-center gap-2">
