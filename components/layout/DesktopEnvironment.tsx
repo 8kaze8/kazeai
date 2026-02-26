@@ -38,7 +38,7 @@ export function DesktopEnvironment({ children }: DesktopEnvironmentProps) {
 
         {/* Page Content */}
         <div className="flex-1 relative z-10 min-h-0 flex items-center justify-center w-full pointer-events-none">
-          <div className="pointer-events-auto">
+          <div className="pointer-events-auto w-full">
             {children}
           </div>
         </div>
