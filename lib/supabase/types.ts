@@ -17,11 +17,7 @@ export type BlogPostContent = {
   }[];
 };
 
-export type QuestLoot = {
-  responseTime: string;
-  costReduction: string;
-  csatScore: string;
-};
+export type QuestLoot = Record<string, string>;
 
 export type ExperienceAchievement = {
   title: string;

@@ -257,24 +257,20 @@ export function QuestLogWindow({ quests }: { quests: Quest[] }) {
                     Quest Loot (Results)
                   </h3>
                   <ul className="space-y-3">
-                    <li className="flex items-center justify-between p-2 rounded bg-[#0d1818] border border-[#224949]">
-                      <span className="text-gray-300 text-sm">Response Time</span>
-                      <span className="text-primary font-mono font-bold text-sm">
-                        {selectedQuest.loot.responseTime}
-                      </span>
-                    </li>
-                    <li className="flex items-center justify-between p-2 rounded bg-[#0d1818] border border-[#224949]">
-                      <span className="text-gray-300 text-sm">Cost Reduction</span>
-                      <span className="text-green-400 font-mono font-bold text-sm">
-                        {selectedQuest.loot.costReduction}
-                      </span>
-                    </li>
-                    <li className="flex items-center justify-between p-2 rounded bg-[#0d1818] border border-[#224949]">
-                      <span className="text-gray-300 text-sm">CSAT Score</span>
-                      <span className="text-yellow-400 font-mono font-bold text-sm">
-                        {selectedQuest.loot.csatScore}
-                      </span>
-                    </li>
+                    {Object.entries(selectedQuest.loot)
+                      .filter(([, val]) => val && val !== "N/A")
+                      .map(([key, val], i) => (
+                        <li key={key} className="flex items-center justify-between p-2 rounded bg-[#0d1818] border border-[#224949]">
+                          <span className="text-gray-300 text-sm">
+                            {key.replace(/([A-Z])/g, " $1").replace(/^./, (s) => s.toUpperCase())}
+                          </span>
+                          <span className={`font-mono font-bold text-sm ${
+                            i === 0 ? "text-primary" : i === 1 ? "text-green-400" : "text-yellow-400"
+                          }`}>
+                            {val}
+                          </span>
+                        </li>
+                      ))}
                   </ul>
                 </div>
 
