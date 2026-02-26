@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "@/components/ui/Icon";
 import { WindowContainer } from "@/components/ui/WindowContainer";
@@ -12,6 +12,28 @@ export function InventoryWindow({ items }: { items: InventoryItem[] }) {
     items[0]
   );
   const [filter, setFilter] = useState("all");
+
+  const categoryMap: Record<string, string> = {
+    weapons: "Weapon",
+    armor: "Armor",
+    artifacts: "Artifact",
+    consumables: "Consumable",
+  };
+
+  const filteredItems = useMemo(() => {
+    if (filter === "all items" || filter === "all") return items;
+    const category = categoryMap[filter];
+    return category ? items.filter((i) => i.category === category) : items;
+  }, [filter, items]);
+
+  useEffect(() => {
+    if (
+      selectedItem &&
+      !filteredItems.some((i) => i.id === selectedItem.id)
+    ) {
+      setSelectedItem(filteredItems[0] ?? null);
+    }
+  }, [filteredItems, selectedItem]);
 
   return (
     <WindowContainer className="flex flex-col w-full max-w-4xl max-h-[calc(100vh-12rem)] md:max-h-[75vh] bg-[#102323]/95 backdrop-blur-md border border-primary/30 rounded-xl shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden">
@@ -151,7 +173,7 @@ export function InventoryWindow({ items }: { items: InventoryItem[] }) {
                  {/* Filter Chips */}
                  <div className="p-2 md:p-3 border-b border-primary/10 flex-shrink-0">
             <div className="flex gap-2 flex-wrap">
-              {["All Items", "Languages", "No-Code", "AI Models"].map(
+              {["All Items", "Weapons", "Armor", "Artifacts", "Consumables"].map(
                 (filterName) => (
                   <button
                     key={filterName}
@@ -174,7 +196,7 @@ export function InventoryWindow({ items }: { items: InventoryItem[] }) {
           {/* Grid Content */}
           <div className="flex-1 overflow-y-auto p-2 md:p-3 min-h-0">
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
-              {items.map((item) => (
+              {filteredItems.map((item) => (
                 <button
                   key={item.id}
                   onClick={() => setSelectedItem(item)}

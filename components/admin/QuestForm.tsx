@@ -51,6 +51,9 @@ export default function QuestForm({
   const [images, setImages] = useState(
     initialData?.images?.join(", ") ?? ""
   );
+  const [category, setCategory] = useState<
+    "main_quest" | "side_quest"
+  >(initialData?.category ?? "main_quest");
   const [sortOrder, setSortOrder] = useState(
     initialData?.sort_order ?? 0
   );
@@ -95,6 +98,7 @@ export default function QuestForm({
         .split(",")
         .map((t) => t.trim())
         .filter(Boolean),
+      category,
       sort_order: sortOrder,
     };
 
@@ -148,6 +152,22 @@ export default function QuestForm({
             className={inputClass}
           />
         </div>
+      </div>
+
+      <div className="w-40 flex flex-col gap-1">
+        <label className={labelClass}>Category</label>
+        <select
+          value={category}
+          onChange={(e) =>
+            setCategory(
+              e.target.value as "main_quest" | "side_quest"
+            )
+          }
+          className={inputClass}
+        >
+          <option value="main_quest">Main Quest</option>
+          <option value="side_quest">Side Quest</option>
+        </select>
       </div>
 
       <div className="flex gap-3">

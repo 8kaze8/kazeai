@@ -84,6 +84,7 @@ export interface Database {
         Row: {
           id: string;
           slug: string;
+          type: "work" | "education";
           period: string;
           title: string;
           company: string;
@@ -103,6 +104,7 @@ export interface Database {
         Insert: {
           id?: string;
           slug: string;
+          type?: "work" | "education";
           period: string;
           title: string;
           company: string;
@@ -136,6 +138,7 @@ export interface Database {
           loot: QuestLoot;
           tech_stack: string[];
           images: string[];
+          category: "main_quest" | "side_quest";
           sort_order: number;
           created_at: string;
           updated_at: string;
@@ -152,6 +155,7 @@ export interface Database {
           loot: QuestLoot;
           tech_stack: string[];
           images?: string[];
+          category?: "main_quest" | "side_quest";
           sort_order?: number;
           created_at?: string;
           updated_at?: string;
@@ -168,11 +172,12 @@ export interface Database {
           level: number;
           stat: string;
           icon: string;
-          rarity: "common" | "rare" | "epic" | "legendary";
+          rarity: "common" | "uncommon" | "rare" | "epic" | "legendary";
           description: string;
           power: number;
           weight: string;
           durability: string;
+          category: string;
           sort_order: number;
           created_at: string;
           updated_at: string;
@@ -184,11 +189,12 @@ export interface Database {
           level: number;
           stat: string;
           icon: string;
-          rarity: "common" | "rare" | "epic" | "legendary";
+          rarity: "common" | "uncommon" | "rare" | "epic" | "legendary";
           description: string;
           power: number;
           weight: string;
           durability: string;
+          category?: string;
           sort_order?: number;
           created_at?: string;
           updated_at?: string;
@@ -201,7 +207,7 @@ export interface Database {
     Views: Record<string, never>;
     Functions: Record<string, never>;
     Enums: {
-      rarity_type: "common" | "rare" | "epic" | "legendary";
+      rarity_type: "common" | "uncommon" | "rare" | "epic" | "legendary";
     };
     CompositeTypes: Record<string, never>;
   };

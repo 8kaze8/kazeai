@@ -10,10 +10,16 @@ interface TimelineClientProps {
   experiences: Experience[];
 }
 
+type Tab = "work" | "education";
+
 export default function TimelineClient({
   experiences,
 }: TimelineClientProps) {
   const router = useRouter();
+  const [activeTab, setActiveTab] = useState<Tab>("work");
+  const filtered = experiences.filter(
+    (exp) => (exp.type ?? "work") === activeTab
+  );
   const [selectedExperience, setSelectedExperience] =
     useState<Experience>(experiences[0]);
 
@@ -50,15 +56,120 @@ export default function TimelineClient({
           <aside className="w-full md:w-64 border-r border-primary/10 bg-surface-dark/50 flex flex-col overflow-y-auto flex-shrink-0 min-h-0 p-3 md:p-4 gap-3 md:gap-4">
             <div>
               <p className="text-[10px] font-bold text-gray-500 mb-2 tracking-widest">
+                ARCHIVE_SELECT
+              </p>
+              <div className="flex flex-col gap-2">
+                {/* MISSIONS */}
+                <label
+                  className={`group relative flex items-center gap-2 rounded border p-2 cursor-pointer transition-all ${
+                    activeTab === "work"
+                      ? "border-primary/40 bg-primary/10"
+                      : "border-transparent hover:border-border-color hover:bg-[#152a2a]"
+                  }`}
+                >
+                  <input
+                    checked={activeTab === "work"}
+                    onChange={() => {
+                      setActiveTab("work");
+                      const w = experiences.filter((e) => (e.type ?? "work") === "work");
+                      if (w[0]) setSelectedExperience(w[0]);
+                    }}
+                    className="hidden peer"
+                    name="archive-tab"
+                    type="radio"
+                  />
+                  {activeTab === "work" && (
+                    <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-primary" />
+                  )}
+                  <Icon
+                    name="work"
+                    size={16}
+                    className={
+                      activeTab === "work"
+                        ? "text-primary"
+                        : "text-accent-text group-hover:text-white"
+                    }
+                  />
+                  <div className="flex flex-col flex-1 min-w-0">
+                    <p
+                      className={`text-xs font-bold leading-tight tracking-wider ${
+                        activeTab === "work"
+                          ? "text-white"
+                          : "text-accent-text group-hover:text-white transition-colors"
+                      }`}
+                    >
+                      &gt; MISSIONS
+                    </p>
+                    {activeTab === "work" && (
+                      <p className="text-[9px] text-primary/70 mt-0.5">
+                        Work Experience
+                      </p>
+                    )}
+                  </div>
+                </label>
+
+                {/* TRAINING */}
+                <label
+                  className={`group relative flex items-center gap-2 rounded border p-2 cursor-pointer transition-all ${
+                    activeTab === "education"
+                      ? "border-primary/40 bg-primary/10"
+                      : "border-transparent hover:border-border-color hover:bg-[#152a2a]"
+                  }`}
+                >
+                  <input
+                    checked={activeTab === "education"}
+                    onChange={() => {
+                      setActiveTab("education");
+                      const e = experiences.filter((ex) => (ex.type ?? "work") === "education");
+                      if (e[0]) setSelectedExperience(e[0]);
+                    }}
+                    className="hidden peer"
+                    name="archive-tab"
+                    type="radio"
+                  />
+                  {activeTab === "education" && (
+                    <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-primary" />
+                  )}
+                  <Icon
+                    name="school"
+                    size={16}
+                    className={
+                      activeTab === "education"
+                        ? "text-primary"
+                        : "text-accent-text group-hover:text-white"
+                    }
+                  />
+                  <div className="flex flex-col flex-1 min-w-0">
+                    <p
+                      className={`text-xs font-bold leading-tight tracking-wider ${
+                        activeTab === "education"
+                          ? "text-white"
+                          : "text-accent-text group-hover:text-white transition-colors"
+                      }`}
+                    >
+                      &gt; TRAINING
+                    </p>
+                    {activeTab === "education" && (
+                      <p className="text-[9px] text-primary/70 mt-0.5">
+                        Education
+                      </p>
+                    )}
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div>
+              <p className="text-[10px] font-bold text-gray-500 mb-2 tracking-widest">
                 SELECT DATA POINT
               </p>
             </div>
             <div className="flex flex-col gap-1">
-              {experiences.map((exp, index) => {
+              {filtered.map((exp, index) => {
                 const isSelected =
                   selectedExperience.id === exp.id;
                 const isLast =
-                  index === experiences.length - 1;
+                  index === filtered.length - 1;
                 return (
                   <button
                     key={exp.id}

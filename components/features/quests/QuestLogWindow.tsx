@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { animate } from "animejs";
 import { Icon } from "@/components/ui/Icon";
@@ -9,9 +9,29 @@ import type { Quest } from "@/lib/supabase/types";
 
 export function QuestLogWindow({ quests }: { quests: Quest[] }) {
   const router = useRouter();
-  const [selectedQuest, setSelectedQuest] = useState<Quest>(quests[0]);
   const [questType, setQuestType] = useState<"main" | "side">("main");
   const questListRef = useRef<HTMLDivElement>(null);
+
+  const filtered = useMemo(
+    () =>
+      quests.filter((q) =>
+        questType === "main"
+          ? q.category === "main_quest"
+          : q.category === "side_quest"
+      ),
+    [quests, questType]
+  );
+
+  const [selectedQuest, setSelectedQuest] = useState<Quest>(
+    () =>
+      quests.find((q) => q.category === "main_quest") ?? quests[0]
+  );
+
+  useEffect(() => {
+    if (filtered.length > 0) {
+      setSelectedQuest(filtered[0]);
+    }
+  }, [questType]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Scroll animation for quest items
   useEffect(() => {
@@ -126,7 +146,7 @@ export function QuestLogWindow({ quests }: { quests: Quest[] }) {
 
                  {/* List Items */}
                  <div ref={questListRef} className="flex-1 overflow-y-auto p-2 space-y-1 min-h-0">
-            {quests.map((quest) => (
+            {filtered.map((quest) => (
               <button
                 key={quest.id}
                 onClick={() => setSelectedQuest(quest)}

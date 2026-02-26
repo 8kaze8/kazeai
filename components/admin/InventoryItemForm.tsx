@@ -31,7 +31,7 @@ export default function InventoryItemForm({
   const [stat, setStat] = useState(initialData?.stat ?? "");
   const [icon, setIcon] = useState(initialData?.icon ?? "");
   const [rarity, setRarity] = useState<
-    "common" | "rare" | "epic" | "legendary"
+    "common" | "uncommon" | "rare" | "epic" | "legendary"
   >(initialData?.rarity ?? "common");
   const [description, setDescription] = useState(
     initialData?.description ?? ""
@@ -40,6 +40,9 @@ export default function InventoryItemForm({
   const [weight, setWeight] = useState(initialData?.weight ?? "");
   const [durability, setDurability] = useState(
     initialData?.durability ?? ""
+  );
+  const [category, setCategory] = useState(
+    initialData?.category ?? "Weapon"
   );
   const [sortOrder, setSortOrder] = useState(
     initialData?.sort_order ?? 0
@@ -70,6 +73,7 @@ export default function InventoryItemForm({
       power,
       weight,
       durability,
+      category,
       sort_order: sortOrder,
     };
 
@@ -169,6 +173,7 @@ export default function InventoryItemForm({
               setRarity(
                 e.target.value as
                   | "common"
+                  | "uncommon"
                   | "rare"
                   | "epic"
                   | "legendary"
@@ -177,6 +182,7 @@ export default function InventoryItemForm({
             className={inputClass}
           >
             <option value="common">Common</option>
+            <option value="uncommon">Uncommon</option>
             <option value="rare">Rare</option>
             <option value="epic">Epic</option>
             <option value="legendary">Legendary</option>
@@ -192,6 +198,20 @@ export default function InventoryItemForm({
             className={inputClass}
           />
         </div>
+      </div>
+
+      <div className="w-40 flex flex-col gap-1">
+        <label className={labelClass}>Category</label>
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className={inputClass}
+        >
+          <option value="Weapon">Weapon</option>
+          <option value="Armor">Armor</option>
+          <option value="Artifact">Artifact</option>
+          <option value="Consumable">Consumable</option>
+        </select>
       </div>
 
       <div className="flex flex-col gap-1">

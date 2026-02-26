@@ -25,6 +25,9 @@ export default function ExperienceForm({
   const router = useRouter();
   const isEdit = !!initialData;
 
+  const [type, setType] = useState<"work" | "education">(
+    (initialData as any)?.type ?? "work"
+  );
   const [slug, setSlug] = useState(initialData?.slug ?? "");
   const [period, setPeriod] = useState(initialData?.period ?? "");
   const [title, setTitle] = useState(initialData?.title ?? "");
@@ -89,6 +92,7 @@ export default function ExperienceForm({
 
     const payload = {
       slug,
+      type,
       period,
       title,
       company,
@@ -136,6 +140,18 @@ export default function ExperienceForm({
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3 max-w-2xl">
+      <div className="w-40 flex flex-col gap-1">
+        <label className={labelClass}>Type</label>
+        <select
+          value={type}
+          onChange={(e) => setType(e.target.value as "work" | "education")}
+          className={inputClass}
+        >
+          <option value="work">Work</option>
+          <option value="education">Education</option>
+        </select>
+      </div>
+
       <div className="flex gap-3">
         <div className="flex-1 flex flex-col gap-1">
           <label className={labelClass}>Title</label>
