@@ -18,6 +18,7 @@ export default function ResearchLabClient({
     useState("/root/all_logs");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const postsPerPage = 4;
 
   const directories = [
@@ -101,7 +102,7 @@ export default function ResearchLabClient({
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-8 pr-3 py-2 bg-[#0d1a1a] border border-primary/30 rounded text-xs text-primary placeholder-primary/40 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all w-48 md:w-64 font-mono"
+                  className="pl-8 pr-3 py-2 bg-[#0d1a1a] border border-primary/30 rounded text-xs text-primary placeholder-primary/40 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all w-full md:w-64 font-mono"
                   placeholder="Search entries..."
                 />
               </div>
@@ -112,10 +113,22 @@ export default function ResearchLabClient({
             </div>
           </div>
 
+          {/* Mobile Sidebar Toggle */}
+          <button
+            className="lg:hidden flex items-center gap-1 text-primary text-xs mb-2 px-1"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+          >
+            <Icon
+              name={sidebarOpen ? "close" : "filter_list"}
+              size={16}
+            />
+            {sidebarOpen ? "Hide Filters" : "Filters & Directory"}
+          </button>
+
           {/* Grid Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6">
             {/* Left Sidebar */}
-            <div className="lg:col-span-3 flex flex-col gap-4">
+            <div className={`${sidebarOpen ? "flex" : "hidden"} lg:flex lg:col-span-3 flex-col gap-4`}>
               {/* Directory */}
               <div className="rounded-lg border border-primary/20 bg-[#0d1a1a]/50 backdrop-blur-sm p-1">
                 <div className="bg-primary/10 px-2 py-1.5 border-b border-primary/10 mb-2">

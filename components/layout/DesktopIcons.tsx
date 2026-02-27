@@ -118,7 +118,7 @@ export function DesktopIcons({ currentPath, onNavigate }: DesktopIconsProps) {
   return (
     <div 
       ref={iconsRef}
-      className="relative flex flex-row md:flex-col gap-4 md:gap-6 flex-wrap justify-start items-start w-full md:w-auto z-10"
+      className="relative flex flex-row md:flex-col gap-2 md:gap-6 flex-wrap justify-start items-start w-full md:w-auto z-10"
       style={{ overflow: "visible" }}
     >
       {icons.map((icon) => (

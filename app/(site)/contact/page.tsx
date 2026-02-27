@@ -139,7 +139,7 @@ export default function Contact() {
         {/* Window Body */}
         <div className="flex flex-1 overflow-hidden flex-col md:flex-row min-h-0 max-h-full">
           {/* Left Sidebar: Channel Select */}
-          <div className="w-full md:w-64 bg-surface-dark/50 border-r border-primary/10 flex flex-col p-3 md:p-4 gap-3 md:gap-4 overflow-y-auto flex-shrink-0 min-h-0">
+          <div className="w-full md:w-64 bg-surface-dark/50 border-r border-primary/10 flex flex-col p-2 md:p-4 gap-2 md:gap-4 overflow-y-auto flex-shrink-0 min-h-0 max-h-[25vh] md:max-h-none">
             <div>
               <p className="text-[10px] font-bold text-gray-500 mb-2 tracking-widest">
                 CHANNEL_SELECT
@@ -526,7 +526,7 @@ export default function Contact() {
                       className="group relative bg-[#152a2a] border border-border-color hover:border-primary/50 transition-all duration-300 rounded overflow-hidden flex flex-col"
                     >
                       <div className="absolute inset-0 bg-primary/5 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 ease-out" />
-                      <div className="relative p-4 flex items-center gap-3 z-10">
+                      <div className="relative p-3 md:p-4 flex items-center gap-3 z-10">
                         <div className="size-10 rounded bg-black/40 border border-border-color group-hover:border-primary/50 flex items-center justify-center text-accent-text group-hover:text-primary transition-colors duration-300 flex-shrink-0">
                           <Icon name="terminal" size={20} />
                         </div>
@@ -546,7 +546,7 @@ export default function Contact() {
                           </div>
                         </div>
                       </div>
-                      <div className="relative px-4 pb-2 pt-0 mt-auto z-10">
+                      <div className="relative px-3 md:px-4 pb-2 pt-0 mt-auto z-10">
                         <div className="flex justify-between items-center text-[9px] font-mono text-accent-text/60 mb-1">
                           <span>LAST_COMMIT</span>
                           <span>2h_AGO</span>
@@ -565,7 +565,7 @@ export default function Contact() {
                       className="group relative bg-[#152a2a] border border-border-color hover:border-primary/50 transition-all duration-300 rounded overflow-hidden flex flex-col"
                     >
                       <div className="absolute inset-0 bg-primary/5 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 ease-out" />
-                      <div className="relative p-4 flex items-center gap-3 z-10">
+                      <div className="relative p-3 md:p-4 flex items-center gap-3 z-10">
                         <div className="size-10 rounded bg-black/40 border border-border-color group-hover:border-primary/50 flex items-center justify-center text-accent-text group-hover:text-primary transition-colors duration-300 flex-shrink-0">
                           <Icon name="business_center" size={20} />
                         </div>
@@ -585,7 +585,7 @@ export default function Contact() {
                           </div>
                         </div>
                       </div>
-                      <div className="relative px-4 pb-2 pt-0 mt-auto z-10">
+                      <div className="relative px-3 md:px-4 pb-2 pt-0 mt-auto z-10">
                         <div className="flex justify-between items-center text-[9px] font-mono text-accent-text/60 mb-1">
                           <span>CONNECTIONS</span>
                           <span>500+</span>
@@ -604,7 +604,7 @@ export default function Contact() {
                       className="group relative bg-[#152a2a] border border-border-color hover:border-primary/50 transition-all duration-300 rounded overflow-hidden flex flex-col"
                     >
                       <div className="absolute inset-0 bg-primary/5 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 ease-out" />
-                      <div className="relative p-4 flex items-center gap-3 z-10">
+                      <div className="relative p-3 md:p-4 flex items-center gap-3 z-10">
                         <div className="size-10 rounded bg-black/40 border border-border-color group-hover:border-primary/50 flex items-center justify-center text-accent-text group-hover:text-primary transition-colors duration-300 flex-shrink-0">
                           <Icon name="tag" size={20} />
                         </div>
@@ -624,7 +624,7 @@ export default function Contact() {
                           </div>
                         </div>
                       </div>
-                      <div className="relative px-4 pb-2 pt-0 mt-auto z-10">
+                      <div className="relative px-3 md:px-4 pb-2 pt-0 mt-auto z-10">
                         <div className="flex justify-between items-center text-[9px] font-mono text-accent-text/60 mb-1">
                           <span>STREAM_STATUS</span>
                           <span>LIVE</span>
@@ -643,7 +643,7 @@ export default function Contact() {
                       className="group relative bg-[#152a2a] border border-border-color hover:border-primary/50 transition-all duration-300 rounded overflow-hidden flex flex-col"
                     >
                       <div className="absolute inset-0 bg-primary/5 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 ease-out" />
-                      <div className="relative p-4 flex items-center gap-3 z-10">
+                      <div className="relative p-3 md:p-4 flex items-center gap-3 z-10">
                         <div className="size-10 rounded bg-black/40 border border-border-color group-hover:border-primary/50 flex items-center justify-center text-accent-text group-hover:text-primary transition-colors duration-300 flex-shrink-0">
                           <Icon name="language" size={20} />
                         </div>
@@ -663,7 +663,7 @@ export default function Contact() {
                           </div>
                         </div>
                       </div>
-                      <div className="relative px-4 pb-2 pt-0 mt-auto z-10">
+                      <div className="relative px-3 md:px-4 pb-2 pt-0 mt-auto z-10">
                         <div className="flex justify-between items-center text-[9px] font-mono text-accent-text/60 mb-1">
                           <span>UPTIME</span>
                           <span>99.9%</span>

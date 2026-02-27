@@ -53,7 +53,7 @@ export default function TimelineClient({
         {/* Window Body */}
         <div className="flex flex-1 overflow-hidden flex-col md:flex-row min-h-0 max-h-full">
           {/* Left Sidebar: Timeline Navigation */}
-          <aside className="w-full md:w-64 border-r border-primary/10 bg-surface-dark/50 flex flex-col overflow-y-auto flex-shrink-0 min-h-0 p-3 md:p-4 gap-3 md:gap-4">
+          <aside className="w-full md:w-64 border-r border-primary/10 bg-surface-dark/50 flex flex-col overflow-y-auto flex-shrink-0 min-h-0 max-h-[30vh] md:max-h-none p-2 md:p-4 gap-2 md:gap-4">
             <div>
               <p className="text-[10px] font-bold text-gray-500 mb-2 tracking-widest">
                 ARCHIVE_SELECT
@@ -174,7 +174,7 @@ export default function TimelineClient({
                   <button
                     key={exp.id}
                     onClick={() => setSelectedExperience(exp)}
-                    className={`group relative flex gap-3 p-3 cursor-pointer rounded-lg transition-all ${
+                    className={`group relative flex gap-3 p-2 md:p-3 cursor-pointer rounded-lg transition-all ${
                       isSelected
                         ? "bg-[#0d1a1a] border border-primary/30 shadow-[0_0_15px_rgba(37,244,244,0.1)]"
                         : "hover:bg-white/5 border border-transparent hover:border-white/10 opacity-70 hover:opacity-100"
@@ -241,7 +241,7 @@ export default function TimelineClient({
           {/* Right Content: Data Display */}
           <main className="flex-1 flex flex-col overflow-y-auto bg-[#0d1a1a]/50 relative min-h-0">
             {/* Terminal Header Status */}
-            <div className="sticky top-0 bg-surface-dark/95 backdrop-blur z-10 border-b border-border-color px-4 md:px-6 py-3 flex items-center gap-2">
+            <div className="sticky top-0 bg-surface-dark/95 backdrop-blur z-10 border-b border-border-color px-3 md:px-6 py-2 md:py-3 flex items-center gap-2">
               <span className="flex h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
               <h2 className="text-white tracking-wide text-xs md:text-sm font-mono opacity-80">
                 System User: Kadir //{" "}
@@ -253,9 +253,9 @@ export default function TimelineClient({
             </div>
 
             {/* Main Details */}
-            <div className="p-4 md:p-6 pb-12 max-w-4xl mx-auto w-full">
+            <div className="p-3 md:p-6 pb-12 max-w-4xl mx-auto w-full">
               {/* Header Section */}
-              <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6 mb-6 border-b border-border-color pb-4 md:pb-6">
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 md:gap-6 mb-4 md:mb-6 border-b border-border-color pb-3 md:pb-6">
                 <div>
                   <div className="flex items-center gap-2 mb-2">
                     <span className="bg-primary/20 text-primary border border-primary/30 px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-widest">
@@ -265,7 +265,7 @@ export default function TimelineClient({
                       ID: {selectedExperience.mission_id}
                     </span>
                   </div>
-                  <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-2 tracking-tight">
+                  <h1 className="text-lg md:text-3xl lg:text-4xl font-bold text-white mb-2 tracking-tight">
                     {selectedExperience.title}
                   </h1>
                   <div className="flex items-center gap-1.5 text-white/60 text-sm md:text-base">
@@ -299,7 +299,7 @@ export default function TimelineClient({
                 {/* Left Column: Description & Stats */}
                 <div className="lg:col-span-2 flex flex-col gap-4 md:gap-6">
                   {/* Description */}
-                  <div className="bg-surface-dark rounded-lg border border-border-color p-4 md:p-6 relative overflow-hidden group">
+                  <div className="bg-surface-dark rounded-lg border border-border-color p-3 md:p-6 relative overflow-hidden group">
                     <div className="absolute top-0 left-0 w-1 h-full bg-primary/50" />
                     <h3 className="text-white font-bold text-base md:text-lg mb-3 flex items-center gap-2">
                       <Icon
@@ -329,7 +329,7 @@ export default function TimelineClient({
                         (achievement, index) => (
                           <div
                             key={index}
-                            className="flex items-start gap-3 p-3 rounded-lg bg-surface-dark border border-border-color hover:border-primary/30 transition-colors"
+                            className="flex items-start gap-3 p-2 md:p-3 rounded-lg bg-surface-dark border border-border-color hover:border-primary/30 transition-colors"
                           >
                             <Icon
                               name="check_circle"

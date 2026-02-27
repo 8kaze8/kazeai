@@ -34,7 +34,7 @@ export function WindowContainer({ children, className }: WindowContainerProps) {
         duration: 0.4,
         ease: [0.4, 0, 0.2, 1],
       }}
-      className={cn("relative z-50", className)}
+      className={cn("relative z-50 w-full max-h-[calc(100vh-8rem)] md:max-h-[80vh] rounded-none md:rounded-xl overflow-hidden", className)}
     >
       {children}
     </motion.div>

@@ -153,61 +153,85 @@ export function AlbaCompanion({ onEatingChange, foodBowlPosition }: AlbaCompanio
     };
   }, [lastInteraction, mounted, isEating, isDragging, setState, setPosition]);
 
-  // Drag logic - same as DesktopIcon
+  // Shared drag move logic
+  const handleDragMove = (clientX: number, clientY: number) => {
+    const deltaX = clientX - dragDataRef.current.startMouseX;
+    const deltaY = clientY - dragDataRef.current.startMouseY;
+
+    // Mark as dragged if moved more than 5px
+    if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
+      dragDataRef.current.wasDragged = true;
+      if (state !== "walking") setState("walking");
+      // Set direction based on drag movement
+      if (deltaX !== 0) {
+        setDirection(deltaX > 0 ? "right" : "left");
+      }
+    }
+
+    // Calculate new position with bounds
+    const spriteSize = 128;
+    const taskbarHeight = 56;
+    const newX = Math.max(0, Math.min(
+      window.innerWidth - spriteSize,
+      dragDataRef.current.startX + deltaX
+    ));
+    const newY = Math.max(0, Math.min(
+      window.innerHeight - taskbarHeight - spriteSize,
+      dragDataRef.current.startY + deltaY
+    ));
+
+    setPosition({ x: newX, y: newY });
+  };
+
+  // Shared drag end logic
+  const handleDragEnd = () => {
+    setIsDragging(false);
+
+    // Return to awake state after drag
+    setTimeout(() => {
+      setState("awake");
+      dragDataRef.current.wasDragged = false;
+    }, 100);
+  };
+
+  // Drag logic - mouse + touch
   useEffect(() => {
     if (!isDragging) return;
 
     const handleMouseMove = (e: MouseEvent) => {
       e.preventDefault();
       e.stopPropagation();
-
-      const deltaX = e.clientX - dragDataRef.current.startMouseX;
-      const deltaY = e.clientY - dragDataRef.current.startMouseY;
-
-      // Mark as dragged if moved more than 5px
-      if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
-        dragDataRef.current.wasDragged = true;
-        if (state !== "walking") setState("walking");
-        // Set direction based on drag movement
-        if (deltaX !== 0) {
-          setDirection(deltaX > 0 ? "right" : "left");
-        }
-      }
-
-      // Calculate new position with bounds
-      const spriteSize = 128;
-      const taskbarHeight = 56;
-      const newX = Math.max(0, Math.min(
-        window.innerWidth - spriteSize,
-        dragDataRef.current.startX + deltaX
-      ));
-      const newY = Math.max(0, Math.min(
-        window.innerHeight - taskbarHeight - spriteSize,
-        dragDataRef.current.startY + deltaY
-      ));
-
-      setPosition({ x: newX, y: newY });
+      handleDragMove(e.clientX, e.clientY);
     };
 
     const handleMouseUp = (e: MouseEvent) => {
       e.preventDefault();
       e.stopPropagation();
+      handleDragEnd();
+    };
 
-      setIsDragging(false);
+    const handleTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
+      if (e.touches[0]) {
+        handleDragMove(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    };
 
-      // Return to awake state after drag
-      setTimeout(() => {
-        setState("awake");
-        dragDataRef.current.wasDragged = false;
-      }, 100);
+    const handleTouchEnd = (e: TouchEvent) => {
+      e.preventDefault();
+      handleDragEnd();
     };
 
     document.addEventListener("mousemove", handleMouseMove, true);
     document.addEventListener("mouseup", handleMouseUp, true);
+    document.addEventListener("touchmove", handleTouchMove, { passive: false });
+    document.addEventListener("touchend", handleTouchEnd, true);
 
     return () => {
       document.removeEventListener("mousemove", handleMouseMove, true);
       document.removeEventListener("mouseup", handleMouseUp, true);
+      document.removeEventListener("touchmove", handleTouchMove);
+      document.removeEventListener("touchend", handleTouchEnd, true);
     };
   }, [isDragging, setPosition, setState, state]);
 
@@ -221,6 +245,23 @@ export function AlbaCompanion({ onEatingChange, foodBowlPosition }: AlbaCompanio
       startY: position.y,
       startMouseX: e.clientX,
       startMouseY: e.clientY,
+      wasDragged: false,
+    };
+
+    setIsDragging(true);
+    resetInteraction();
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!e.touches[0]) return;
+    e.preventDefault();
+    e.stopPropagation();
+
+    dragDataRef.current = {
+      startX: position.x,
+      startY: position.y,
+      startMouseX: e.touches[0].clientX,
+      startMouseY: e.touches[0].clientY,
       wasDragged: false,
     };
 
@@ -432,12 +473,13 @@ export function AlbaCompanion({ onEatingChange, foodBowlPosition }: AlbaCompanio
         transition: isDragging ? "transform 0.1s" : "transform 0.1s",
       }}
       onMouseDown={handleMouseDown}
+      onTouchStart={handleTouchStart}
       onClick={handleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       <motion.div
-        className="relative w-full h-full"
+        className="relative w-full h-full scale-75 md:scale-100 origin-bottom"
         whileHover={{ scale: isDragging ? 1 : 1.05 }}
       >
         {/* Angry glow effect */}

@@ -12,6 +12,7 @@ export function InventoryWindow({ items }: { items: InventoryItem[] }) {
     items[0]
   );
   const [filter, setFilter] = useState("all");
+  const [profileOpen, setProfileOpen] = useState(false);
 
   const categoryMap: Record<string, string> = {
     weapons: "Weapon",
@@ -63,8 +64,20 @@ export function InventoryWindow({ items }: { items: InventoryItem[] }) {
 
       {/* Window Body */}
       <div className="flex flex-1 overflow-hidden flex-col md:flex-row min-h-0 max-h-full">
+        {/* Mobile Profile Toggle */}
+        <button
+          className="md:hidden flex items-center gap-1 text-primary text-xs mb-2 px-1"
+          onClick={() => setProfileOpen(!profileOpen)}
+        >
+          <Icon
+            name={profileOpen ? "close" : "person"}
+            size={16}
+          />
+          {profileOpen ? "Hide Profile" : "Character Profile"}
+        </button>
+
         {/* Left Panel: Character Profile & Stats */}
-        <div className="w-full md:w-64 bg-surface-dark/50 border-r border-primary/10 flex flex-col p-3 md:p-4 gap-3 md:gap-4 overflow-y-auto flex-shrink-0 min-h-0">
+        <div className={`${profileOpen ? "flex" : "hidden"} md:flex w-full md:w-64 bg-surface-dark/50 border-r border-primary/10 flex-col p-3 md:p-4 gap-3 md:gap-4 overflow-y-auto flex-shrink-0 min-h-0`}>
           {/* Character Avatar */}
           <div className="flex flex-col items-center gap-3">
             <div className="relative group">

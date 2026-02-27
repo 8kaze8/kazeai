@@ -210,7 +210,7 @@ export function DiceRollOverlay() {
               />
 
               {/* Content */}
-              <div className="relative z-10 flex flex-col items-center p-6">
+              <div className="relative z-10 flex flex-col items-center p-3 md:p-6">
                 {/* Header */}
                 <motion.div
                   className="flex items-center gap-3 mb-4"
@@ -259,11 +259,11 @@ export function DiceRollOverlay() {
                       {transitionType === "criticalFail" ? (
                         <GlitchText
                           text={message.title}
-                          className="text-4xl md:text-5xl font-bold font-mono tracking-wider text-red-400"
+                          className="text-2xl md:text-5xl font-bold font-mono tracking-wider text-red-400"
                         />
                       ) : transitionType === "criticalSuccess" ? (
                         <motion.h1
-                          className="text-4xl md:text-5xl font-bold font-mono tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-400 to-orange-400"
+                          className="text-2xl md:text-5xl font-bold font-mono tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-400 to-orange-400"
                           style={{
                             textShadow: "0 0 30px rgba(255, 215, 0, 0.8), 0 0 60px rgba(255, 165, 0, 0.5)",
                           }}
@@ -281,7 +281,7 @@ export function DiceRollOverlay() {
                         </motion.h1>
                       ) : (
                         <motion.h1
-                          className="text-4xl md:text-5xl font-bold font-mono tracking-wider text-primary"
+                          className="text-2xl md:text-5xl font-bold font-mono tracking-wider text-primary"
                           style={{
                             textShadow: "0 0 20px rgba(37, 244, 244, 0.8)",
                           }}

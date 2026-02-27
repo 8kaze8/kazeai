@@ -76,7 +76,7 @@ export function Taskbar({ currentPath, onNavigate, onFeedAlba, isAlbaEating = fa
       </div>
 
       {/* Center: Active Apps */}
-      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-1 h-full">
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:flex items-center gap-1 h-full">
         {/* Terminal Icon */}
         <div className="h-full flex items-center px-4 hover:bg-white/5 border-b-2 border-transparent hover:border-white/20 relative group cursor-pointer transition-colors">
           <Icon
@@ -122,7 +122,7 @@ export function Taskbar({ currentPath, onNavigate, onFeedAlba, isAlbaEating = fa
 
       {/* Right: System Tray */}
       <div className="flex items-center gap-2 md:gap-4 px-2">
-        <div className="flex items-center gap-1 text-white/60">
+        <div className="hidden md:flex items-center gap-1 text-white/60">
           <button className="p-1.5 hover:bg-white/10 rounded hover:text-white transition-colors">
             <Icon name="expand_less" size={18} />
           </button>

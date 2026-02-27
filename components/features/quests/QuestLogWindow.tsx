@@ -26,11 +26,13 @@ export function QuestLogWindow({ quests }: { quests: Quest[] }) {
     () =>
       quests.find((q) => q.category === "main_quest") ?? quests[0]
   );
+  const [showMobileDetail, setShowMobileDetail] = useState(false);
 
   useEffect(() => {
     if (filtered.length > 0) {
       setSelectedQuest(filtered[0]);
     }
+    setShowMobileDetail(false);
   }, [questType]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Scroll animation for quest items
@@ -94,7 +96,7 @@ export function QuestLogWindow({ quests }: { quests: Quest[] }) {
       {/* Main Window Content */}
       <div className="flex flex-1 overflow-hidden min-h-0 max-h-full">
         {/* Sidebar: Quest List */}
-        <div className="w-full md:w-1/3 border-r border-[#224949] flex flex-col bg-[#102323] min-h-0 flex-shrink-0">
+        <div className={`w-full md:w-1/3 border-r border-[#224949] flex flex-col bg-[#102323] min-h-0 flex-shrink-0 ${showMobileDetail ? "hidden md:flex" : "flex"}`}>
           {/* Header / User Stats */}
           <div className="p-3 md:p-4 border-b border-[#224949] bg-gradient-to-b from-[#152e2e] to-[#102323]">
             <div className="flex flex-col gap-1.5">
@@ -149,7 +151,10 @@ export function QuestLogWindow({ quests }: { quests: Quest[] }) {
             {filtered.map((quest) => (
               <button
                 key={quest.id}
-                onClick={() => setSelectedQuest(quest)}
+                onClick={() => {
+                  setSelectedQuest(quest);
+                  setShowMobileDetail(true);
+                }}
                 className={`quest-item opacity-0 w-full text-left group flex items-center gap-3 p-3 rounded-lg border transition-all ${
                   selectedQuest.id === quest.id
                     ? "bg-[#1a2c2c] border-primary/30 shadow-neon"
@@ -194,7 +199,7 @@ export function QuestLogWindow({ quests }: { quests: Quest[] }) {
         </div>
 
         {/* Main Content: Quest Details */}
-        <div className="hidden md:flex flex-col flex-[2] bg-surface-darker relative overflow-hidden min-h-0">
+        <div className={`flex-col flex-[2] bg-surface-darker relative overflow-hidden min-h-0 ${showMobileDetail ? "flex" : "hidden md:flex"}`}>
           {/* Background Grid Effect */}
           <div
             className="absolute inset-0 opacity-10 pointer-events-none"
@@ -205,8 +210,16 @@ export function QuestLogWindow({ quests }: { quests: Quest[] }) {
             }}
           ></div>
           <div className="relative z-10 flex flex-col h-full overflow-y-auto min-h-0">
+            {/* Mobile Back Button */}
+            <button
+              className="md:hidden flex items-center gap-1 text-primary text-xs px-4 pt-3 hover:text-primary/80 transition-colors"
+              onClick={() => setShowMobileDetail(false)}
+            >
+              <Icon name="arrow_back" size={16} />
+              Back to Quests
+            </button>
             {/* Detail Header */}
-            <div className="p-8 pb-4">
+            <div className="p-4 md:p-8 pb-4">
               <div className="flex items-start justify-between">
                 <div>
                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider mb-3">
@@ -233,7 +246,7 @@ export function QuestLogWindow({ quests }: { quests: Quest[] }) {
             </div>
 
             {/* Content Layout */}
-            <div className="px-8 pb-8 space-y-6">
+            <div className="px-4 md:px-8 pb-4 md:pb-8 space-y-6">
               {/* Mission Briefing */}
               <div className="bg-[#102323]/80 border border-[#224949] rounded-xl p-6 backdrop-blur-sm">
                 <h3 className="flex items-center gap-2 text-[#90cbcb] font-bold uppercase text-sm tracking-widest mb-4">

@@ -125,10 +125,8 @@ export function D20Dice() {
     <div className="relative flex flex-col items-center justify-center">
       {/* Glow effect */}
       <motion.div
-        className="absolute rounded-full pointer-events-none"
+        className="absolute rounded-full pointer-events-none w-[280px] h-[280px] md:w-[400px] md:h-[400px]"
         style={{
-          width: 400,
-          height: 400,
           background: `radial-gradient(circle, ${colors.glow} 0%, transparent 70%)`,
           filter: "blur(40px)",
         }}
@@ -147,11 +145,7 @@ export function D20Dice() {
       <div
         ref={containerRef}
         id="dice-canvas"
-        className="relative z-10"
-        style={{
-          width: 400,
-          height: 400,
-        }}
+        className="relative z-10 w-[280px] h-[280px] md:w-[400px] md:h-[400px]"
       />
 
       {/* Fallback / Loading state */}
